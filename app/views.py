@@ -5,12 +5,16 @@ Werkzeug Documentation:  http://werkzeug.pocoo.org/documentation/
 This file creates your application.
 """
 
-from app import app
+from app import app, db, login_manager
 from flask import render_template, request, redirect, url_for
+from flask_login import login_user, logout_user, current_user, login_required
+from app.forms import LoginForm
+from app.models import UserProfile
+from werkzeug.security import check_password_hash
 
 
 ###
-# Routing for your application.
+# Routing for application.
 ###
 
 @app.route('/')
@@ -22,7 +26,37 @@ def home():
 @app.route('/about/')
 def about():
     """Render the website's about page."""
-    return render_template('about.html', name="Mary Jane")
+    return render_template('about.html')
+
+
+@app.route('/secure-page')
+@login_required
+def secure_page():
+    """Render a secure page on our website that only logged in users can access."""
+    return render_template('secure_page.html')
+
+
+
+
+@app.route('/login', methods=['GET','POST'])
+def login():
+    form = LoginForm()
+
+    if request.method == 'POST' and form.validate_on_submit():
+        if form.username.data:
+            username = form.username.data
+            password = form.password.DataRequired
+
+
+            user = UserProfile.query.filter_by(username=username).first()
+            if user is not None and check_password_hash(user.password, password):
+                login_user(user)
+
+            return redirect(url_for('secure_page'))
+    return render_template('login.html', form=form)
+
+
+
 
 
 ###
