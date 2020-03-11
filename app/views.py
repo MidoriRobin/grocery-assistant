@@ -73,11 +73,23 @@ def load_user(id):
 def recomm():
     pro1 = Products(101, "Chef's Select Tuna", "F001", "tuna.png", "High quality tuna for a high quality customer",
                     2000.00)
+
     pro2 = Products(102, "Pristine Banana Porridge", "F002", "porridge.png",
+<<<<<<< HEAD
                         "porridge of the gods" ,250.00)
+=======
+                        "porridge of the gods", 250.00)
+
+>>>>>>> df5adf33353066f2d5b5695513189d943915c9cd
     pro3 = Products(103, "Empire Tuna and Onion Ice-cream", "F003", "wat.png",
                     "You know what you signed up for, and you wont regret it", 5000.00)
-    buylst = [pro1,pro2,pro3]
+
+    pro4 = Products(104, "Empire Vanilla Ice-cream", "F004", "Vanilla.png",
+                    "Regular Ice cream", 5000.00)
+
+    buylst = [pro1,pro2,pro3,pro4]
+
+    return render_template('recommendation.html', recom=buylst)
 
 # The functions below should be applicable to all Flask apps.
 ###
