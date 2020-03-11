@@ -19,10 +19,11 @@
     <div class="col-md-4">
       <div class="thumbnail">
 
-        <img src="http://placehold.it/200x200" alt="Placeholder image" class="img-circle">
+        <img src="{{ url_for('static', filename=('images/' + product.image)) }}" alt="Placeholder image" class="img-thumbnail">
         <div class="caption">
           <h2>{{ product.name }}</h2>
-          <p>Description here</p>
+          <p>{{ product.desc}}</p>
+
           <p><a class="btn btn-success" href="#" role="button">Add to Cart »</a></p>
         </div>
       </div>
