@@ -11,4 +11,5 @@ Flask-SQLAlchemy
 Flask-Migrate
 Flask-Script
 Flask-Login
+psycopg2
 gunicorn==20.0.4

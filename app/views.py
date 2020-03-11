@@ -45,7 +45,7 @@ def login():
     if request.method == 'POST' and form.validate_on_submit():
         if form.username.data:
             username = form.username.data
-            password = form.password.DataRequired
+            password = form.password.data
 
 
             user = UserProfile.query.filter_by(username=username).first()
@@ -56,7 +56,9 @@ def login():
     return render_template('login.html', form=form)
 
 
-
+@login_manager.user_loader
+def load_user(id):
+    return UserProfile.query.get(int(id))
 
 
 ###
