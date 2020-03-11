@@ -4,7 +4,7 @@ from flask_login import LoginManager
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '$ecurekey4app'
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://capstn:cap@localhost/supermarket"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:vampirelove98@localhost/supermarket"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 db = SQLAlchemy(app)
