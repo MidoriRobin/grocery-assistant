@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block css %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
+{% endblock %}
+
+{% block main %}
+  <div class="">
+    <ul>
+      {% for item in recom %}
+      <li>
+        <img src="{{ url_for('static',filename=('images/'+item.image)) }}">
+        <p>{{ item.name }}</p>
+        <p>Description: {{ item.desc }}</p>
+        <p>Price: {{ item.desc }}</p>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endblock %}
