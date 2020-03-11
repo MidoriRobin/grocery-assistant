@@ -21,7 +21,7 @@ from werkzeug.security import check_password_hash
 def home():
     """Render website's home page."""
     displproducts = Products.query.filter_by().all()
-    return render_template('products/home.html',products=displproducts)
+    return render_template('/home.html')
 
 
 @app.route('/about/')
@@ -68,6 +68,17 @@ def load_user(id):
     #return render_template('products.html', prods=rows)
     #pass
 ###
+
+@app.route('/recommended items')
+def recomm():
+    pro1 = Products(101, "Chef's Select Tuna", "F001", "tuna.png", "High quality tuna for a high quality customer",
+                    2000.00)
+    pro2 = Products(102, "Pristine Banana Porridge", "F002", "porridge.png",
+                        "porridge of the gods" 250.00)
+    pro3 = Products(103, "Empire Tuna and Onion Ice-cream", "F003", "wat.png",
+                    "You know what you signed up for, and you wont regret it", 5000.00)
+    buylst = [pro1,pro2,pro3]
+
 # The functions below should be applicable to all Flask apps.
 ###
 

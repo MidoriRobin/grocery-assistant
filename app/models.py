@@ -43,14 +43,25 @@ class Products(db.Model):
     name = db.Column(db.String(255))
     code = db.Column(db.String(255))
     image = db.Column(db.String(80))
+    desc = db.Column(db.Text)
     price = db.Column(db.Float)
 
-    def __init__(self, pid, name, code, image, price):
+    def __init__(self, pid, name, code, image, desc, price):
         self.pid = pid
         self.name = name
         self.code = code
         self.image = image
+        self.desc = desc
         self.price = price
+
+    def get_price(self):
+        return self.price
+
+    def get_name(self):
+        return self.name
+
+    def get_img(self, arg):
+        return self.image
 
     def get_id(self):
         try:
@@ -59,4 +70,4 @@ class Products(db.Model):
             return str(self.id)  # python 3 support
 
     def __repr__(self):
-        return '<Item %r>' %  self.name
+        return '<Item %s $ %s>' %  self.name,self.price
