@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block main %}
+
+  <h1> Aisle 1</h1>
+  <ul class="catalog">
+    {% for prod in prods %}
+      <li>{{ prod }}</li>
+    {% endfor %}
+  </ul>
+  
+{% endblock %}
