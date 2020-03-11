@@ -20,7 +20,8 @@ from werkzeug.security import check_password_hash
 @app.route('/')
 def home():
     """Render website's home page."""
-    return render_template('home.html')
+    displproducts = Products.query.filter_by().all()
+    return render_template('products/home.html',products=displproducts)
 
 
 @app.route('/about/')
@@ -61,11 +62,11 @@ def load_user(id):
     return UserProfile.query.get(int(id))
 
 
-@app.route('/products')
-def products():
-    rows = Products.query.filter_by().all()
-    return render_template('products.html', prods=rows)
-    pass
+#@app.route('/products')
+#def products():
+    #rows = Products.query.filter_by().all()
+    #return render_template('products.html', prods=rows)
+    #pass
 ###
 # The functions below should be applicable to all Flask apps.
 ###
