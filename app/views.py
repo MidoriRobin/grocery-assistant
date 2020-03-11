@@ -66,6 +66,12 @@ def products():
     rows = Products.query.filter_by().all()
     return render_template('products.html', prods=rows)
     pass
+
+@app.route('/recommended items')
+def recomm():
+    buylst = [("Corned Beef", "500.00"),("Almond Milk", "500.00"),
+        ("Canned YellowT", "500.00"),("Sardines", "500.00")]
+    pass
 ###
 # The functions below should be applicable to all Flask apps.
 ###
