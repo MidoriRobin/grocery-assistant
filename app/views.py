@@ -20,8 +20,8 @@ from werkzeug.security import check_password_hash
 @app.route('/')
 def home():
     """Render website's home page."""
-    displproducts = Products.query.filter_by().all()
-    return render_template('products/home.html',products=displproducts)
+    products = Products.query.filter_by().all()
+    return render_template('home.html',products=products)
 
 
 @app.route('/about/')
