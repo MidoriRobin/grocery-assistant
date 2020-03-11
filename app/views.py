@@ -75,13 +75,9 @@ def recomm():
                     2000.00)
 
     pro2 = Products(102, "Pristine Banana Porridge", "F002", "porridge.png",
-<<<<<<< HEAD
-                        "porridge of the gods" ,250.00)
-=======
                         "porridge of the gods", 250.00)
 
->>>>>>> df5adf33353066f2d5b5695513189d943915c9cd
-    pro3 = Products(103, "Empire Tuna and Onion Ice-cream", "F003", "wat.png",
+    pro3 = Products(103, "Empire Tuna and Onion Ice-cream", "F003", "Vanilla.png",
                     "You know what you signed up for, and you wont regret it", 5000.00)
 
     pro4 = Products(104, "Empire Vanilla Ice-cream", "F004", "Vanilla.png",
