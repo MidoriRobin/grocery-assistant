@@ -11,6 +11,7 @@ from flask_login import login_user, logout_user, current_user, login_required
 from app.forms import LoginForm
 from app.models import *
 from werkzeug.security import check_password_hash
+import random
 
 
 ###
@@ -71,6 +72,8 @@ def load_user(id):
 
 @app.route('/recommended items')
 def recomm():
+    products = Products.query.filter_by().all()
+
     pro1 = Products(101, "Chef's Select Tuna", "F001", "tuna.png", "High quality tuna for a high quality customer",
                     2000.00)
 
@@ -84,6 +87,20 @@ def recomm():
                     "Regular Ice cream", 5000.00)
 
     buylst = [pro1,pro2,pro3,pro4]
+
+
+# Function to randomize
+    r_num = len(products)
+
+    count = 0
+
+    while count < 4:
+        prod = products[random.randrange(0,r_num)]
+        if prod in buylst:
+            continue
+        else:
+            buylst.append(prod)
+            count+=1
 
     return render_template('recommendation.html', recom=buylst)
 
