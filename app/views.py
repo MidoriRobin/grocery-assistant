@@ -38,8 +38,6 @@ def secure_page():
     return render_template('secure_page.html')
 
 
-
-
 @app.route('/login', methods=['GET','POST'])
 def login():
     form = LoginForm()
@@ -70,9 +68,41 @@ def load_user(id):
     #pass
 ###
 
+#The route can be changed to "TryThese" instead of "Recommended items"
 @app.route('/recommended items')
 def recomm():
+    """Renders the recommendation page for a specific user based on the
+        items they previously rated."""
+
     products = Products.query.filter_by().all()
+
+# Dummy recommendations
+    buylst = dummyList()
+
+# Getting the list of recommended products, using the predictions(INCOMPLETE)
+    #p_list = Products.query.filter_by()
+# Function to randomize
+    rprop = buylst + rdmizePredictions(products)
+    return render_template('recommendation.html', recom=rprop)
+
+def rdmizePredictions(product_list):
+    """
+    Fetches, six random products from a list of predictions.
+    """
+    six_rand_prod = []
+    r_num = len(pList)
+
+    while len(six_rand_prod) < 6:
+        prod = products[random.randrange(0,r_num)]
+        if prod in pList:
+            continue
+        else:
+            six_rand_prod.append(prod)
+    return six_rand_prod
+
+def dummyList():
+    """Generates a list of dummy products, and returns them as a list of products.
+    """
 
     pro1 = Products(101, "Chef's Select Tuna", "F001", "tuna.png", "High quality tuna for a high quality customer",
                     2000.00)
@@ -86,23 +116,8 @@ def recomm():
     pro4 = Products(104, "Empire Vanilla Ice-cream", "F004", "Vanilla.png",
                     "Regular Ice cream", 5000.00)
 
-    buylst = [pro1,pro2,pro3,pro4]
-
-
-# Function to randomize
-    r_num = len(products)
-
-    count = 0
-
-    while count < 4:
-        prod = products[random.randrange(0,r_num)]
-        if prod in buylst:
-            continue
-        else:
-            buylst.append(prod)
-            count+=1
-
-    return render_template('recommendation.html', recom=buylst)
+    d_list = [pro1, pro2, pro3, pro4]
+    return d_list
 
 # The functions below should be applicable to all Flask apps.
 ###
