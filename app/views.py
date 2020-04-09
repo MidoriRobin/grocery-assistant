@@ -12,7 +12,7 @@ from app.forms import LoginForm
 from app.models import *
 from werkzeug.security import check_password_hash
 import random
-
+from app.RecomHandler import RecomHandler
 
 ###
 # Routing for application.
@@ -69,12 +69,23 @@ def load_user(id):
 ###
 
 #The route can be changed to "TryThese" instead of "Recommended items"
-@app.route('/recommended items')
-def recomm():
+@app.route('/TryThese/<userid>')
+def recomm(userid):
+    userid = 1
     """Renders the recommendation page for a specific user based on the
         items they previously rated."""
 
     products = Products.query.filter_by().all()
+
+# Prepares recommendations, compiles products in an array
+    recomD = recomHandler.recomHelper()
+
+    uRecom = recomHandler.rec_by_usr(userid, recomD)
+
+    recomProd = []
+
+    for i in uRecom[1]:
+        recomProd.append(Products.query.filter_by(pid=i).first())
 
 # Dummy recommendations
     buylst = dummyList()
