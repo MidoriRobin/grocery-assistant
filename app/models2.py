@@ -3,8 +3,9 @@ from sqlalchemy import CHAR, Column, DECIMAL, Enum, ForeignKey, String
 from sqlalchemy.dialects.mysql import INTEGER
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
+from . import db
 
-Base = declarative_base()
+Base = declarative_base(bind=cpstnpro)
 metadata = Base.metadata
 
 

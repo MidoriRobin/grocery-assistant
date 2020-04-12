@@ -1,3 +1,4 @@
+import csv
 
 class RecomHandler():
     """docstring for recomHandler."""
@@ -11,13 +12,13 @@ class RecomHandler():
         and the values under each column belong to an array of values that each correspond to
         the value of each key values being arrays that contain a list of values.
         """
-
+        print("Activating recomHelper..")
         recomDict = {}
         uid = []
         pid = []
         rating = []
 
-        with open('../predRatings.csv', newline='') as csvfile:
+        with open('./predRatings.csv', newline='') as csvfile:
           reader = csv.DictReader(csvfile)
           for row in reader:
             uid.append(row['acc_num'])
@@ -36,6 +37,7 @@ class RecomHandler():
         Accepts a user's id  and a dictionary as parameters and fetches
         the list of products of which various ratings have been generated.
         """
+        print("Generating recommendations for specified user")
 
         if userid in set(recDict['uid']):
           sIndex = recDict['uid'].index(userid)
@@ -46,5 +48,6 @@ class RecomHandler():
 
         ratings = recDict['rating'][sIndex:numOfRecc]
         products = recDict['pid'][sIndex:numOfRecc]
-
+        
+        print("Outputting..")
         return ratings, products

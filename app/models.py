@@ -1,3 +1,6 @@
+from sqlalchemy import CHAR, Column, DECIMAL, Enum, ForeignKey, String
+from sqlalchemy.dialects.mysql import INTEGER
+from sqlalchemy.orm import relationship
 from . import db
 from werkzeug.security import generate_password_hash
 
@@ -71,3 +74,157 @@ class Products(db.Model):
 
     def __repr__(self):
         return '<Item %s $ %s>' %  self.name,self.price
+
+class DeliversTo(db.Model):
+    __bind_key__ = 'cpstnpro'
+    __tablename__ = 'delivers_to'
+
+    deliv_id = db.Column(db.String(10), primary_key=True)
+    d_type = db.Column(db.String(10))
+    deliv_time = db.Column(db.String(10))
+
+    def __init__(self, arg):
+        pass
+
+class Supermarket(db.Model):
+    __bind_key__ = 'cpstnpro'
+    __tablename__ = 'supermarket'
+
+    spm_id = db.Column(db.String(10), primary_key=True)
+    spm_name = db.Column(db.String(60), unique=True, index=True)
+    street = db.Column(db.String(60))
+    city = db.Column(db.String(50))
+    branch = db.Column(db.String(60))
+
+
+class Usr(db.Model):
+    __bind_key__ = 'cpstnpro'
+    __tablename__ = 'usr'
+
+    acc_num = db.Column(db.String(20), primary_key=True)
+    fname = db.Column(db.String(20))
+    lname = db.Column(db.String(20))
+    sex = db.Column(db.CHAR(1))
+    phone = db.Column(db.String(100))
+    city = db.Column(db.String(100))
+    street = db.Column(db.String(100))
+    email = db.Column(db.String(100))
+    hh_size = db.Column(db.Integer)
+    no_adults = db.Column(db.Integer)
+    no_kids = db.Column(db.Integer)
+    marital_s = db.Column(db.CHAR(1))
+    diet_pref = db.Column(db.String(20))
+
+    def __init__(self, fname, lname, sex, phone, city, street, email, hh_size, no_adults, no_kids, marital_s, diet_pref):
+        pass
+
+
+class Courier(db.Model):
+    __bind_key__ = 'cpstnpro'
+    __tablename__ = 'courier'
+
+    cour_id = db.Column(db.String(10), primary_key=True)
+    cour_name = db.Column(db.String(100))
+    spm_name = db.Column(db.ForeignKey('supermarket.spm_name', ondelete='CASCADE'), unique=True, index=True)
+    loc = db.Column(db.String(100))
+
+    supermarket = relationship('Supermarket')
+
+
+class Item(db.Model):
+    __bind_key__ = 'cpstnpro'
+    __tablename__ = 'items'
+
+    item_id = db.Column(db.String(20), primary_key=True)
+    item_name = db.Column(db.String(100))
+    price = db.Column(db.String(10))
+    brand = db.Column(db.String(30))
+    desc_item = db.Column(db.String(100))
+    i_type = db.Column(db.String(30))
+    likes = db.Column(db.Integer)
+    dislikes = db.Column(db.Integer)
+    exp_date = db.Column(db.String(20))
+    spm_id = db.Column(db.ForeignKey('supermarket.spm_id'), index=True)
+
+    spm = relationship('Supermarket')
+
+    def __init__(self, item_name, price, brand, desc, type, exp, spm_id):
+
+        self.item_name = item_name
+        self.price = price
+        self.brand = brand
+        self.desc_item = desc
+        self.i_type = type
+        self.exp_date = exp
+        self.spm_id = spm_id
+
+    def __repr__(self):
+        return '<Item: %s $ %s>' %  (self.item_name,self.price)
+
+class Order(db.Model):
+    __bind_key__ = 'cpstnpro'
+    __tablename__ = 'orders'
+
+    order_id = db.Column(db.String(20), primary_key=True)
+    acc_num = db.Column(db.ForeignKey('usr.acc_num'), index=True)
+    deliv_time = db.Column(db.String(100))
+    sale_value = db.Column(DECIMAL(10, 2))
+
+    usr = relationship('Usr')
+
+
+class ShoppingCart(db.Model):
+    __bind_key__ = 'cpstnpro'
+    __tablename__ = 'shopping_cart'
+
+    cart_id = db.Column(db.String(20), primary_key=True)
+    acc_num = db.Column(db.ForeignKey('usr.acc_num'), index=True)
+
+    usr = relationship('Usr')
+
+
+class Payment(db.Model):
+    __bind_key__ = 'cpstnpro'
+    __tablename__ = 'payment'
+
+    pay_id = db.Column(db.String(10), primary_key=True)
+    order_id = db.Column(db.ForeignKey('orders.order_id', ondelete='CASCADE'), index=True)
+    p_time = db.Column(db.String(10))
+
+    order = relationship('Order')
+
+
+class Review(db.Model):
+    __bind_key__ = 'cpstnpro'
+    __tablename__ = 'review'
+
+    acc_num = db.Column(db.ForeignKey('usr.acc_num'), primary_key=True, nullable=False)
+    item_id = db.Column(db.ForeignKey('items.item_id'), primary_key=True, nullable=False, index=True)
+    ratings = db.Column(db.Enum('1', '2', '3', '4', '5', name='rating_levels'))
+
+    usr = relationship('Usr')
+    item = relationship('Item')
+
+
+class ShoppingList(db.Model):
+    __bind_key__ = 'cpstnpro'
+    __tablename__ = 'shopping_list'
+
+    list_id = db.Column(db.String(20), primary_key=True)
+    item_id = db.Column(db.ForeignKey('items.item_id'), index=True)
+    quantity = db.Column(db.String(20))
+
+    item = relationship('Item')
+
+
+class Usi(db.Model):
+    __bind_key__ = 'cpstnpro'
+    __tablename__ = 'usi'
+
+    acc_num = db.Column(db.ForeignKey('usr.acc_num'), primary_key=True, nullable=False)
+    item_id = db.Column(db.ForeignKey('items.item_id'), primary_key=True, nullable=False, index=True)
+    cart_id = db.Column(db.ForeignKey('shopping_cart.cart_id'), primary_key=True, nullable=False, index=True)
+
+    usr = relationship('Usr')
+    cart = relationship('ShoppingCart')
+    item = relationship('Item')

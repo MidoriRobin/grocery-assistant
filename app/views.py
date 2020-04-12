@@ -71,44 +71,53 @@ def load_user(id):
 #The route can be changed to "TryThese" instead of "Recommended items"
 @app.route('/TryThese/<userid>')
 def recomm(userid):
-    userid = 1
+
     """Renders the recommendation page for a specific user based on the
         items they previously rated."""
 
-    products = Products.query.filter_by().all()
+    print("Recomm works")
+    #products = Products.query.filter_by().all()
 
 # Prepares recommendations, compiles products in an array
-    recomD = recomHandler.recomHelper()
+    recomD = RecomHandler.recomHelper()
 
-    uRecom = recomHandler.rec_by_usr(userid, recomD)
+    uRecom = RecomHandler.rec_by_usr(userid, recomD)
 
     recomProd = []
-
+    print(uRecom[1])
     for i in uRecom[1]:
-        recomProd.append(Products.query.filter_by(pid=i).first())
+        recomProd.append(Item.query.filter_by(item_id=i).first())
 
+    print("List of items: \n")
+    print(recomProd)
 # Dummy recommendations
     buylst = dummyList()
 
 # Getting the list of recommended products, using the predictions(INCOMPLETE)
     #p_list = Products.query.filter_by()
 # Function to randomize
-    rprop = buylst + rdmizePredictions(products)
-    return render_template('recommendation.html', recom=rprop)
+    #rprop = buylst + rdmizePredictions(products)
+# W/o Dummy products
+    randPred = rdmizePredictions(recomProd)
+    print(randPred)
+    return render_template('recommendation.html', recom=randPred)
 
 def rdmizePredictions(product_list):
     """
     Fetches, six random products from a list of predictions.
     """
     six_rand_prod = []
-    r_num = len(pList)
+    r_num = len(product_list)
 
+    print("Starting randomization..")
     while len(six_rand_prod) < 6:
-        prod = products[random.randrange(0,r_num)]
-        if prod in pList:
+        prod = product_list[random.randrange(0,r_num)]
+        if prod in six_rand_prod:
             continue
         else:
             six_rand_prod.append(prod)
+
+    print("Complete..")
     return six_rand_prod
 
 def dummyList():
