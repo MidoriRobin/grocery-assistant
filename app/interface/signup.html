@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Quick Shop-Sign Up</title>
+
+		<style>
+    #signUpBoxes {
+    margin-left: auto;
+    margin-right: auto;
+    width: 35%;
+    border: 2px solid black;
+    background-color: orange;
+
+}
+h1 {
+    text-align: center;
+    padding-bottom: 30px;
+    padding-top: 50px;
+    font-size: 50px;
+    color: orange;
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+    font-size: 60px;
+    font-style: italic;
+}
+h2{
+    text-align: center;
+    padding-top: 20px;
+}
+
+body{
+        background-image: url('beg.jpeg');
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-size: cover;
+        font-family:"Trebuchet MS", Helvetica, sans-serif;
+            
+        }
+#signUpBoxes > form > div > button {
+    position: relative;
+    left: 320px;
+    top: -5px;
+    background-color: black;
+    border: none;
+    color: white;
+    padding: 12px 28px;
+    text-decoration: none;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+#signUpBoxes > form > div > label {
+    display: inline-block;
+    width: 140px;
+    padding-right: 20px; 
+    text-align: right;
+    padding-top: 30px;
+}
+form {
+    font-size: 20px;
+    color: black;
+}
+
+.txtBoxError {
+    border:2px solid red;
+}
+.txtBoxValid {
+    border:2px solid green;
+}
+#submit_form{
+    color: orange;
+}
+#hiddenField{
+     color: orange;
+}
+		</style>
+		
+	</head>
+
+	<body>
+		<h1>QuickShop</h1>
+		<div id="signUpBoxes">
+			<form method="post" name="form" id="form" >
+                <h2>Create Account</h2>
+				<div>
+                    <label for="firstname">First Name:</label>
+                    <input type="text" name="fname" id="fname" /><br /><br />
+                    
+                    <label for="lname">Last Name:</label>
+                    <input type="text" name="lname" id="lname" /><br /><br />
+
+                    <label for="sex">Sex:</label>
+                    <select id="sex" name="sex">
+                        <option value="M">M</option>
+                        <option value="F">F</option>
+                    </select><br /><br />
+                    
+                    <label for="pnum">Phone Number:</label>
+                    <input type="number" name="number" id="pnum" /><br /><br />
+
+                    <label for="city">City:</label>
+                    <input type="text" name="city" id="city" /><br /><br />
+                    
+                    <label for="street">Street:</label>
+                    <input type="text" name="street" id="street" /><br /><br />
+
+                    <label for="hhsize">HouseHold Size:</label>
+                    <input type="number" name="hhsize" id="hhsize" /><br /><br />
+                    
+                    <label for="no_adults">Number of Adults:</label>
+                    <input type="number" name="no_adult" id="no_adult" /><br /><br />
+                    
+                    <label for="no_kids">Number of Kids:</label>
+                    <input type="number" name="no_kids" id="no_kids" /><br /><br />
+                    
+                    <label for="m_status">Marital Status:</label>
+                    <select id="m_status" name="m_status">
+                        <option value="M">M</option>
+                        <option value="C">C</option>
+                        <option value="D">D</option>
+                        <option value="S">S</option>
+                    </select><br /><br />
+
+                    <label for="d_pref">Diet Preference:</label>
+                     <select id="d_pref" name="d_pref">
+                        <option value="h_carb">High Carb</option>
+                        <option value="l_carb">Low Carb</option>
+                        <option value="veg">Vegtarian</option>
+                        <option value="protein">High Protein</option>
+                        <option value="meat">Meat Lover</option>
+                        <option value="s_food">Sea Food</option>
+                    </select><br /><br /><br />
+
+                    <label for="acc_num">Account Number:</label>
+                    <input type="text" name="acc_num" id="acc_num" /><br /><br />
+                    
+					<label for="emailAddress">Email Address:</label>
+					<input type="text" name="emailAddress" id="emailAddress" /><br /><br />
+					
+					<label for="password">Password:</label>
+					<input type="password" name="password" id="password" /><br /><br />
+
+                    <label for="password">Confirm Password:</label>
+                    <input type="password" name="password" id="c_password" /><br /><br />
+					
+					
+                    <input type="hidden" name="hiddenField" id="hiddenField" style="color: orange;"/><br /><br />
+					<button type="submit" name="submit_form" id="submit_form" style="color: orange;">Login</button>
+				</div>
+			</form>
+		</div>
+	</body>
+</html>
