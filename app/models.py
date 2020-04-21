@@ -101,7 +101,8 @@ class Usr(db.Model):
     __bind_key__ = 'cpstnpro'
     __tablename__ = 'usr'
 
-    acc_num = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    #This will be changed back to strinn temporarily
+    acc_num = db.Column(db.String(20), primary_key=True)
     fname = db.Column(db.String(20))
     lname = db.Column(db.String(20))
     sex = db.Column(db.String(6))

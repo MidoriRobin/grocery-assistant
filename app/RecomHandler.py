@@ -55,12 +55,12 @@ class RecomHandler():
     @staticmethod
     def diet_cnvrtr(pref):
         p_List = {
-        'Vegetarian' = ["Cereal"],
-        'High Carb' = ["Dairy",],
-        'Low Carb' = ["Seafood","Canned Products"],
-        'High Protien' = ["Seafood", "Meat", "Dairy"],
-        'Meat Lover' = ["Seafood", "Meat"],
-        'Pescatarian' = ["Seafood", "Cereal"],
+        'Vegetarian' : ["Cereal"],
+        'High Carb' : ["Dairy",],
+        'Low Carb' : ["Seafood","Canned Products"],
+        'High Protien' : ["Seafood", "Meat", "Dairy"],
+        'Meat Lover' : ["Seafood", "Meat"],
+        'Pescatarian' : ["Seafood", "Cereal"],
         }
 
         if pref not in pList:

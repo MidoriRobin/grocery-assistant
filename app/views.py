@@ -114,7 +114,7 @@ def recomm(userid):
 
     if userid not in recomD["uid"]:
         print("No generated recommendations...possibly a new user?")
-        uRecom =
+        uRecom = ["Seafood", "Cereal"]
     else:
         uRecom = RecomHandler.rec_by_usr(userid, recomD)
 
