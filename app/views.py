@@ -81,7 +81,11 @@ def recomm(userid):
 # Prepares recommendations, compiles products in an array
     recomD = RecomHandler.recomHelper()
 
-    uRecom = RecomHandler.rec_by_usr(userid, recomD)
+    if userid not in recomD["uid"]:
+        print("No generated recommendations...possibly a new user?")
+        uRecom =
+    else:
+        uRecom = RecomHandler.rec_by_usr(userid, recomD)
 
     recomProd = []
     print(uRecom[1])

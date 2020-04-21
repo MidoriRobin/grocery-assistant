@@ -48,6 +48,22 @@ class RecomHandler():
 
         ratings = recDict['rating'][sIndex:numOfRecc]
         products = recDict['pid'][sIndex:numOfRecc]
-        
+
         print("Outputting..")
         return ratings, products
+
+    @staticmethod
+    def diet_cnvrtr(pref):
+        p_List = {
+        'Vegetarian' = ["Cereal"],
+        'High Carb' = ["Dairy",],
+        'Low Carb' = ["Seafood","Canned Products"],
+        'High Protien' = ["Seafood", "Meat", "Dairy"],
+        'Meat Lover' = ["Seafood", "Meat"],
+        'Pescatarian' = ["Seafood", "Cereal"],
+        }
+
+        if pref not in pList:
+            return "Invalid, selection"
+        else:
+            return p_List[pref]
