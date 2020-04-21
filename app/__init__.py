@@ -6,10 +6,10 @@ import sqlacodegen
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = './app/static/uploads'
 app.config['SECRET_KEY'] = '$ecurekey4app'
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://capstn:cap@localhost/supermarket"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:vampirelove98@localhost/supermarket"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['SQLALCHEMY_BINDS'] = {
-    'cpstnpro': "postgresql://capstn:cap@localhost/cpstnspmdb"
+    'cpstnpro': "postgresql://postgres:vampirelove98@localhost/cpstnspmdb"
 }
 
 db = SQLAlchemy(app)

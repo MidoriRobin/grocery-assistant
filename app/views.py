@@ -6,9 +6,9 @@ This file creates your application.
 """
 
 from app import app, db, login_manager
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, current_user, login_required
-from app.forms import LoginForm
+from app.forms import LoginForm, UsrForm
 from app.models import *
 from werkzeug.security import check_password_hash
 import random
@@ -54,6 +54,37 @@ def login():
 
             return redirect(url_for('secure_page'))
     return render_template('login.html', form=form)
+
+
+#User sign up route
+@app.route('/signup', methods=['GET','POST'])
+def signup():
+    form = UsrForm()
+    #Collect data from form and save in database
+    if request.method == 'POST' and form.validate_on_submit():
+        fname= form.firstname.data
+        lname= form.lastname.data
+        sex = form.sex.data
+        email= form.email.data
+        phone = form.phonenumber.data
+        city = form.city.data
+        street = form.street.data
+        hh_size = form.hhsize.data
+        no_adults = form.adlts.data
+        no_kids = form.kids.data
+        marital_s = form.maritalstat.data
+        diet_pref = form.dietpref.data
+        password = form.password.data
+
+        user = Usr(fname,lname,sex,email,phone,city,street,hh_size,
+        no_adults,no_kids,marital_s,diet_pref,password)
+        db.session.add(user)
+        db.session.commit()
+
+        flash('success','')
+        return redirect(url_for('home'))
+    return render_template('signup.html', form=form)
+
 
 
 @login_manager.user_loader
