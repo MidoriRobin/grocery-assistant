@@ -96,27 +96,40 @@ class Supermarket(db.Model):
     city = db.Column(db.String(50))
     branch = db.Column(db.String(60))
 
-
+#Usr Model to be put back here
 class Usr(db.Model):
     __bind_key__ = 'cpstnpro'
     __tablename__ = 'usr'
 
-    acc_num = db.Column(db.String(20), primary_key=True)
+    acc_num = db.Column(db.Integer, primary_key=True, autoincrement=True)
     fname = db.Column(db.String(20))
     lname = db.Column(db.String(20))
-    sex = db.Column(db.CHAR(1))
+    sex = db.Column(db.String(6))
     phone = db.Column(db.String(100))
     city = db.Column(db.String(100))
     street = db.Column(db.String(100))
     email = db.Column(db.String(100))
-    hh_size = db.Column(db.Integer)
-    no_adults = db.Column(db.Integer)
-    no_kids = db.Column(db.Integer)
-    marital_s = db.Column(db.CHAR(1))
+    hh_size = db.Column(db.String(6))
+    no_adults = db.Column(db.String(6))
+    no_kids = db.Column(db.String(6))
+    marital_s = db.Column(db.String(10))
     diet_pref = db.Column(db.String(20))
+    password = db.Column(db.String(255))
 
-    def __init__(self, fname, lname, sex, phone, city, street, email, hh_size, no_adults, no_kids, marital_s, diet_pref):
-        pass
+    def __init__(self, fname, lname, sex, phone, city, street, email, hh_size, no_adults, no_kids, marital_s, diet_pref, password):
+        self.fname = fname
+        self.lname = lname
+        self.sex = sex
+        self.phone = phone
+        self.city = city
+        self.street = street
+        self.email = email
+        self.hh_size = hh_size
+        self.no_adults = no_adults
+        self.no_kids = no_kids
+        self.marital_s = marital_s
+        self.diet_pref = diet_pref
+        self.password = generate_password_hash(password, method='pbkdf2:sha256')
 
 
 class Courier(db.Model):
