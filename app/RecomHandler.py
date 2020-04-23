@@ -54,6 +54,9 @@ class RecomHandler():
 
     @staticmethod
     def diet_cnvrtr(pref):
+        """
+        Converts a newly added user's preference into a list of food types.
+        """
         p_List = {
         'Vegetarian' : ["Cereal"],
         'High Carb' : ["Dairy",],
@@ -63,7 +66,7 @@ class RecomHandler():
         'Pescatarian' : ["Seafood", "Cereal"],
         }
 
-        if pref not in pList:
+        if pref not in p_List:
             return "Invalid, selection"
         else:
             return p_List[pref]

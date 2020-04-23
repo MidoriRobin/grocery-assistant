@@ -18,6 +18,9 @@ from app.RecomHandler import RecomHandler
 # Routing for application.
 ###
 
+START = 1335
+END = 1434
+
 @app.route('/')
 def home():
     """Render website's home page."""
@@ -48,7 +51,7 @@ def login():
             password = form.password.data
 
 
-            user = UserProfile.query.filter_by(username=username).first()
+            user = Usr.query.filter_by(fname=username).first()
             if user is not None and check_password_hash(user.password, password):
                 login_user(user)
 
@@ -76,7 +79,8 @@ def signup():
         diet_pref = form.dietpref.data
         password = form.password.data
 
-        user = Usr(fname,lname,sex,email,phone,city,street,hh_size,
+        anum = anum_gen()
+        user = Usr(anum,fname,lname,sex,email,phone,city,street,hh_size,
         no_adults,no_kids,marital_s,diet_pref,password)
         db.session.add(user)
         db.session.commit()
@@ -111,33 +115,31 @@ def recomm(userid):
 
 # Prepares recommendations, compiles products in an array
     recomD = RecomHandler.recomHelper()
+    cUser = Usr.query.filter_by(acc_num=userid).first()
 
-    if userid not in recomD["uid"]:
-        print("No generated recommendations...possibly a new user?")
-        uRecom = ["Seafood", "Cereal"]
+# If statement to check if the user is a new user and has any previous recommendation
+    if is_new(cUser.acc_num, recomD["uid"]):
+        print("New user!")
+        uRecom = RecomHandler.diet_cnvrtr(cUser.diet_pref)
+        recomProd = fetch_recomm(1,uRecom)
     else:
+        print("Old user..")
         uRecom = RecomHandler.rec_by_usr(userid, recomD)
+        recomProd = fetch_recomm(2,uRecom)
 
-    recomProd = []
-    print(uRecom[1])
-    for i in uRecom[1]:
-        recomProd.append(Item.query.filter_by(item_id=i).first())
-
-    print("List of items: \n")
-    print(recomProd)
 # Dummy recommendations
-    buylst = dummyList()
+    buylst = dummy_list()
 
 # Getting the list of recommended products, using the predictions(INCOMPLETE)
     #p_list = Products.query.filter_by()
 # Function to randomize
     #rprop = buylst + rdmizePredictions(products)
 # W/o Dummy products
-    randPred = rdmizePredictions(recomProd)
+    randPred = rdmize_predictions(recomProd)
     print(randPred)
     return render_template('recommendation.html', recom=randPred)
 
-def rdmizePredictions(product_list):
+def rdmize_predictions(product_list):
     """
     Fetches, six random products from a list of predictions.
     """
@@ -155,7 +157,7 @@ def rdmizePredictions(product_list):
     print("Complete..")
     return six_rand_prod
 
-def dummyList():
+def dummy_list():
     """Generates a list of dummy products, and returns them as a list of products.
     """
 
@@ -174,6 +176,55 @@ def dummyList():
     d_list = [pro1, pro2, pro3, pro4]
     return d_list
 
+def anum_gen():
+    """
+    Generates an auto incrementing ID. TEMPORARY UNTIL THE DATABASE IS ADJUSTED.
+    """
+    global START
+    global END
+
+    newAnum = START
+    START = START+1
+
+    if newAnum > END:
+        return "No new Numbers"
+    else:
+        return newAnum
+
+def is_new(userid, list):
+    """
+    Checks if the user was registered recently (if they have any predictions generated).
+    """
+    print(list)
+
+    if userid not in list:
+        return True
+    else:
+        return False
+
+def fetch_recomm(type,uRList):
+    """
+    Fetches recommendation based on user type.
+    """
+
+    if type == 1:
+        recomProd = []
+        print(uRList)
+        for i in uRList:
+            recomProd.extend(Item.query.filter_by(i_type=i).all())
+
+        print("List of items: \n")
+        print(recomProd)
+        return recomProd
+    else:
+        recomProd = []
+        print(uRList[1])
+        for i in uRList[1]:
+            recomProd.append(Item.query.filter_by(item_id=i).first())
+
+        print("List of items: \n")
+        print(recomProd)
+        return recomProd
 # The functions below should be applicable to all Flask apps.
 ###
 

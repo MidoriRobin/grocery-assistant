@@ -117,7 +117,8 @@ class Usr(db.Model):
     diet_pref = db.Column(db.String(20))
     password = db.Column(db.String(255))
 
-    def __init__(self, fname, lname, sex, phone, city, street, email, hh_size, no_adults, no_kids, marital_s, diet_pref, password):
+    def __init__(self, anum, fname, lname, sex, phone, city, street, email, hh_size, no_adults, no_kids, marital_s, diet_pref, password):
+        self.acc_num = anum
         self.fname = fname
         self.lname = lname
         self.sex = sex
