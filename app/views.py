@@ -51,7 +51,7 @@ def login():
             password = form.password.data
 
 
-            user = Usr.query.filter_by(fname=username).first()
+            user = Usr.query.filter_by(acc_num=username).first()
             if user is not None and check_password_hash(user.password, password):
                 login_user(user)
 
@@ -93,7 +93,7 @@ def signup():
 
 @login_manager.user_loader
 def load_user(id):
-    return UserProfile.query.get(int(id))
+    return Usr.query.get(id)
 
 
 #@app.route('/products')
@@ -105,6 +105,7 @@ def load_user(id):
 
 #The route can be changed to "TryThese" instead of "Recommended items"
 @app.route('/TryThese/<userid>')
+@login_required
 def recomm(userid):
 
     """Renders the recommendation page for a specific user based on the

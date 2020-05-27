@@ -133,6 +133,23 @@ class Usr(db.Model):
         self.diet_pref = diet_pref
         self.password = generate_password_hash(password, method='pbkdf2:sha256')
 
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        try:
+            return unicode(self.acc_num)  # python 2 support
+        except NameError:
+            return str(self.acc_num)  # python 3 support
+
+    def __repr__(self):
+        return '<User %r>' %  self.fname
 
 class Courier(db.Model):
     __bind_key__ = 'cpstnpro'
