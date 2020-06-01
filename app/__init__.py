@@ -9,7 +9,7 @@ app.config['SECRET_KEY'] = '$ecurekey4app'
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://capstn:cap@localhost/supermarket"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['SQLALCHEMY_BINDS'] = {
-    'cpstnpro': "postgresql://capstn:cap@localhost/cpstnspmdb"
+    'cpstnpro': "postgresql://capstn:cap@localhost/spmdb"
 }
 
 db = SQLAlchemy(app)

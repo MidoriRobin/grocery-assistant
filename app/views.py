@@ -21,6 +21,8 @@ from app.RecomHandler import RecomHandler
 START = 1335
 END = 1434
 
+#api routes
+
 @app.route('/')
 def home():
     """Render website's home page."""
@@ -104,7 +106,7 @@ def load_user(id):
 ###
 
 #The route can be changed to "TryThese" instead of "Recommended items"
-@app.route('/TryThese/<userid>')
+@app.route('/TryThese/<userid>', methods=['GET'])
 @login_required
 def recomm(userid):
 
@@ -139,6 +141,68 @@ def recomm(userid):
     randPred = rdmize_predictions(recomProd)
     print(randPred)
     return render_template('recommendation.html', recom=randPred)
+
+#Cart----------------------------------------------
+@app.route('/users/<userid>/cart', methods=['GET'])
+def cart(userid):
+    """View items in users cart"""
+    pass
+
+@app.route('/items/<itemid>/cart', methods=['POST'])
+def add_item_cart(itemid):
+    """Route to add item to a cart"""
+    pass
+
+@app.route('/users/cart/<itemid>', methods=['DELETE'])
+def remove_from_cart(itemid):
+    pass
+
+#Lists----------------------------------------------
+@app.route('/users/<userid>/lists', methods=['POST'])
+def make_list(userid):
+    """Route to add a new list to a user account"""
+    pass
+
+@app.route('/users/<userid>/lists', methods=['GET'])
+def view_lists(userid):
+    """Route to view all lists of a specific user"""
+    pass
+
+@app.route('/items/<itemid>/list', methods=['PUT'])
+def add_item_list(itemid):
+    """Route to add an item to a specific list"""
+    pass
+
+@app.route('/users/list/<itemid>', methods=['DELETE'])
+def remove_item_list(arg):
+    pass
+
+#Courier----------------------------------------------
+@app.route('/courier', methods=['GET'])
+def courier(arg):
+    """Shows a list of couriers"""
+    pass
+
+# @app.route('')
+# def chs_courier(arg):
+#     pass
+
+#Order----------------------------------------------
+@app.route('/order/<userid>', methods=['GET'])
+def view_order(arg):
+    pass
+
+@app.route('/user/<userid>/order', methods=['POST'])
+def make_order(arg):
+    pass
+
+#Review----------------------------------------------
+
+@app.route('/item/<itemid>/review')
+def review_item(itemid):
+    pass
+
+#Locally required functions
 
 def rdmize_predictions(product_list):
     """
