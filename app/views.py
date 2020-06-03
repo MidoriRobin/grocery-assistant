@@ -13,6 +13,7 @@ from app.models import *
 from werkzeug.security import check_password_hash
 import random
 from app.RecomHandler import RecomHandler
+from datetime import date
 
 ###
 # Routing for application.
@@ -52,10 +53,16 @@ def login():
             username = form.username.data
             password = form.password.data
 
-
-            user = Usr.query.filter_by(acc_num=username).first()
-            if user is not None and check_password_hash(user.password, password):
+            if username in range(1234,1333):
+                print("this is a test user..")
+                user = Usr.query.filter_by(acc_num=username).first()
                 login_user(user)
+
+            else:
+                print("not a test user..")
+                user = Usr.query.filter_by(acc_num=username).first()
+                if user is not None and check_password_hash(user.password, password):
+                    login_user(user)
 
             return redirect(url_for('secure_page'))
     return render_template('login.html', form=form)
@@ -81,8 +88,8 @@ def signup():
         diet_pref = form.dietpref.data
         password = form.password.data
 
-        anum = anum_gen()
-        user = Usr(anum,fname,lname,sex,email,phone,city,street,hh_size,
+
+        user = Usr(fname,lname,sex,email,phone,city,street,hh_size,
         no_adults,no_kids,marital_s,diet_pref,password)
         db.session.add(user)
         db.session.commit()
@@ -146,21 +153,48 @@ def recomm(userid):
 @app.route('/users/<userid>/cart', methods=['GET'])
 def cart(userid):
     """View items in users cart"""
+
+    #Fetching the users shopping cart ID
+    cart = ShoppingCart.query.filter_by(acc_num=userid).first()
+
+    #Using this cart ID we get the list of items from the user
+    cart_items = usi.query.filter_by(cart_id=cart.cart_id).all()
+
     pass
 
-@app.route('/items/<itemid>/cart', methods=['POST'])
-def add_item_cart(itemid):
+@app.route('/items/<itemid>/cart/<cartid>', methods=['POST'])
+def add_item_cart(itemid,cartid):
     """Route to add item to a cart"""
-    pass
+
+    item = Usi(cartid, itemid, quantity, date.today())
+    db.session.add(item)
+    db.session.commit()
+
+    status = [{
+        "message": "item successfully added to cart"
+    }]
+
+    return status
 
 @app.route('/users/cart/<itemid>', methods=['DELETE'])
 def remove_from_cart(itemid):
-    pass
+
+    item = Usi.query.filter_by(item_id=itemid).first()
+
+    db.session.delete(item)
+    db.session.commit()
+
+    status = [{
+        "message": "Item deleted successfully"
+    }]
+
+    return status
 
 #Lists----------------------------------------------
 @app.route('/users/<userid>/lists', methods=['POST'])
 def make_list(userid):
     """Route to add a new list to a user account"""
+
     pass
 
 @app.route('/users/<userid>/lists', methods=['GET'])
@@ -198,9 +232,19 @@ def make_order(arg):
 
 #Review----------------------------------------------
 
-@app.route('/item/<itemid>/review')
-def review_item(itemid):
-    pass
+@app.route('/item/<itemid>/review/<rating>')
+def review_item(itemid, rating):
+
+    review = Review(user_id,itemid,rating)
+
+    db.session.add(review)
+    db.session.commit()
+
+    status = [{
+        "message": "Review successfully added"
+    }]
+
+    return status
 
 #Locally required functions
 

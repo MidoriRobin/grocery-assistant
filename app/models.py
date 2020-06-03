@@ -162,9 +162,14 @@ class Courier(db.Model):
     cour_id = db.Column(db.Integer, primary_key=True)
     cour_name = db.Column(db.String(100))
     spm_name = db.Column(db.ForeignKey('supermarket.spm_name', ondelete='CASCADE'), unique=True, index=True)
-    loc = db.Column(db.String(100))
+    location = db.Column(db.String(100))
 
     supermarket = relationship('Supermarket')
+
+    def __init__(self, cour_name, spm_name, loc):
+        self.cour_name = cour_name
+        self.spm_name = spm_name
+        self.location = loc
 
 
 class Item(db.Model):
@@ -173,9 +178,9 @@ class Item(db.Model):
 
     item_id = db.Column(db.Integer, primary_key=True)
     item_name = db.Column(db.String(100))
-    price = db.Column(db.String(10))
+    cost = db.Column(DECIMAL(10, 2))
     brand = db.Column(db.String(30))
-    desc_item = db.Column(db.String(100))
+    desc_item = db.Column(db.String(255))
     i_type = db.Column(db.String(30))
     likes = db.Column(db.Integer)
     dislikes = db.Column(db.Integer)
@@ -209,6 +214,11 @@ class Order(db.Model):
 
     usr = relationship('Usr')
 
+    def __init__(self, acc_num, deliv_time, cost):
+        self.acc_num = acc_num
+        self.deliv_id = deliv_time
+        self.sale_value = cost
+
 
 class ShoppingCart(db.Model):
     __bind_key__ = 'cpstnpro'
@@ -216,8 +226,13 @@ class ShoppingCart(db.Model):
 
     cart_id = db.Column(db.Integer, primary_key=True)
     acc_num = db.Column(db.ForeignKey('usr.acc_num'), index=True)
+    date_created = db.Column(db.DateTime)
 
     usr = relationship('Usr')
+
+    def __init__(self, acc_num, date_created):
+        this.acc_num = acc_num
+        this.date_created = date_created
 
 
 class Payment(db.Model):
@@ -248,20 +263,39 @@ class ShoppingList(db.Model):
     __tablename__ = 'shopping_list'
 
     list_id = db.Column(db.Integer, primary_key=True)
-    item_id = db.Column(db.ForeignKey('items.item_id'), index=True)
-    quantity = db.Column(db.String(20))
+    acc_num = db.Column(db.ForeignKey('usr.acc_num'), index=True)
+    date_created = db.Column(db.DateTime)
 
-    item = relationship('Item')
+    usr = relationship('Usr')
+
+
+class ListItem(object):
+    """docstring for ListItem."""
+
+    id = db.Column(db.Integer, primary_key=True)
+    list_id = db.Column(db.ForeignKey('shopping_list.list_id'), primary_key=True, nullable=False, index=True)
+    item_id = db.Column(db.ForeignKey('items.item_id'), primary_key=True, nullable=False, index=True)
+    quantity = db.Column(db.Integer)
+    date_added = db.Column(db.DateTime)
+
+    def __init__(self, list_id, item_id, date_added):
+        self.list_id = list_id
+        self.item_id = item_id
+        self.date_added = date_added
 
 
 class Usi(db.Model):
     __bind_key__ = 'cpstnpro'
     __tablename__ = 'usi'
 
-    acc_num = db.Column(db.ForeignKey('usr.acc_num'), primary_key=True, nullable=False)
-    item_id = db.Column(db.ForeignKey('items.item_id'), primary_key=True, nullable=False, index=True)
+    id = db.Column(db.Integer, primary_key=True)
     cart_id = db.Column(db.ForeignKey('shopping_cart.cart_id'), primary_key=True, nullable=False, index=True)
+    item_id = db.Column(db.ForeignKey('items.item_id'), primary_key=True, nullable=False, index=True)
+    quantity = db.Column(db.Integer)
+    created_date = db.Column(db.DateTime)
 
-    usr = relationship('Usr')
     cart = relationship('ShoppingCart')
     item = relationship('Item')
+
+    def __init__(self, cart_id, item_id, quantity, created_date):
+        pass
