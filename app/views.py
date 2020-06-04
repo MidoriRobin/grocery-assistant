@@ -160,7 +160,12 @@ def cart(userid):
     #Using this cart ID we get the list of items from the user
     cart_items = usi.query.filter_by(cart_id=cart.cart_id).all()
 
-    pass
+    status = [{
+        "message": "cart successfully fetched"
+        "cart": cart_items
+    }]
+
+    return status
 
 @app.route('/items/<itemid>/cart/<cartid>', methods=['POST'])
 def add_item_cart(itemid,cartid):
@@ -195,21 +200,57 @@ def remove_from_cart(itemid):
 def make_list(userid):
     """Route to add a new list to a user account"""
 
-    pass
+
+    list = ShoppingList(userid,date.today())
+
+    db.session.add(list)
+    db.session.commit()
+
+    status = [{
+        "messsage": "List successfully added"
+    }]
+
+    return status
 
 @app.route('/users/<userid>/lists', methods=['GET'])
 def view_lists(userid):
     """Route to view all lists of a specific user"""
-    pass
 
-@app.route('/items/<itemid>/list', methods=['PUT'])
-def add_item_list(itemid):
+    lists = ShoppingList.query.filter_by(acc_num=userid).all()
+
+    status = [{
+        "Message": "Displaying all shopping lists based on user id"
+    }]
+
+    return status
+
+@app.route('/items/<itemid>/list/listid', methods=['PUT'])
+def add_item_list(itemid, listid):
     """Route to add an item to a specific list"""
-    pass
 
-@app.route('/users/list/<itemid>', methods=['DELETE'])
-def remove_item_list(arg):
-    pass
+    sList = ShoppingList.query.filter_by(list_id=listid).first()
+
+    sList.add_item(itemid, quantity, date.today)
+
+    status = [{
+        "message": "Item added to list"
+    }]
+
+    return status
+
+@app.route('/users/list/<listid>/<itemid>', methods=['DELETE'])
+def remove_item_list(listid,itemid):
+
+    item = ListItem.query.filter_by(list_id=listid, item_id=itemid).first()
+
+    db.session.delete(item)
+    db.session.commit()
+
+    status = [{
+        "message": "Item successfully deleted"
+    }]
+
+    return status
 
 #Courier----------------------------------------------
 @app.route('/courier', methods=['GET'])

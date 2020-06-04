@@ -268,6 +268,46 @@ class ShoppingList(db.Model):
 
     usr = relationship('Usr')
 
+    def __init__(self, acc_num, date_created):
+        self.acc_num = acc_num
+        self.date_created = date_created
+
+    def add_item(self, itemid, quantity, date):
+
+        newItem = ListItem(self.list_id, itemid, quantity, date)
+
+        db.session.add(newItem)
+        db.session.commit()
+
+        status = [{
+            "message": "Item successfully added to list"
+        }]
+
+        return status
+
+    def view_items(self):
+
+        items = ListItem.query.filter_by(list_id=self.list_id).all()
+
+        status = [{
+            "message": "Items obtained"
+            "Items": items
+        }]
+
+        return status
+
+    def remove_item(self, itemid):
+
+        item = ListItem.query.filter_by(list_id=self.list_id, item_id=itemid).first()
+
+        db.session.delete(item)
+        db.session.commit()
+
+        status = [{
+            "message": "Item successfully removed"
+        }]
+
+        return status
 
 class ListItem(object):
     """docstring for ListItem."""
@@ -282,6 +322,8 @@ class ListItem(object):
         self.list_id = list_id
         self.item_id = item_id
         self.date_added = date_added
+
+
 
 
 class Usi(db.Model):
