@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from flask_cors import CORS
 import sqlacodegen
 
 app = Flask(__name__)
@@ -19,6 +20,8 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'  # necessary to tell Flask-Login what the default route is for the login page
 login_manager.login_message_category = "info"  # customize the flash message category
 
+# enable CORS
+CORS(app, resources={r'/*': {'origins': '*'}})
 
 app.config.from_object(__name__)
 from app import views

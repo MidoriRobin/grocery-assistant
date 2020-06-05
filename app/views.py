@@ -6,7 +6,7 @@ This file creates your application.
 """
 
 from app import app, db, login_manager
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_user, logout_user, current_user, login_required
 from app.forms import LoginForm, UsrForm
 from app.models import *
@@ -27,6 +27,12 @@ def home():
     products = Products.query.filter_by().all()
     return render_template('home.html',products=products)
 
+
+@app.route('/api/ping')
+def ping():
+
+    message = "New Ping"
+    return jsonify(message=message)
 
 @app.route('/about/')
 def about():
@@ -255,4 +261,4 @@ def page_not_found(error):
 
 
 if __name__ == '__main__':
-    app.run(debug=True,host="0.0.0.0",port="8080")
+    app.run(debug=True,host="0.0.0.0",port="5000")
