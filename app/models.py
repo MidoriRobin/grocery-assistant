@@ -179,20 +179,22 @@ class Item(db.Model):
     item_id = db.Column(db.Integer, primary_key=True)
     item_name = db.Column(db.String(100))
     cost = db.Column(DECIMAL(10, 2))
+    department = db.Column(db.String(50))
     brand = db.Column(db.String(30))
     desc_item = db.Column(db.String(255))
     i_type = db.Column(db.String(30))
-    likes = db.Column(db.Integer)
-    dislikes = db.Column(db.Integer)
+    likes = db.Column(db.Integer, default=0)
+    dislikes = db.Column(db.Integer, default=0)
     exp_date = db.Column(db.String(20))
     spm_id = db.Column(db.ForeignKey('supermarket.spm_id'), index=True)
+    size = db.Column(db.String(25))
 
     spm = relationship('Supermarket')
 
     def __init__(self, item_name, price, brand, desc, type, exp, spm_id):
 
         self.item_name = item_name
-        self.price = price
+        self.cost = price
         self.brand = brand
         self.desc_item = desc
         self.i_type = type
@@ -200,7 +202,7 @@ class Item(db.Model):
         self.spm_id = spm_id
 
     def __repr__(self):
-        return '<Item: %s $ %s>' %  (self.item_name,self.price)
+        return '<Item: %s $ %s>' %  (self.item_name,self.cost)
 
 
 class Order(db.Model):
@@ -257,19 +259,27 @@ class Review(db.Model):
     usr = relationship('Usr')
     item = relationship('Item')
 
+    def __init__(self, userid, itemid, rating):
+
+        self.acc_num = userid
+        self.item_id = itemid
+        self.ratings = rating
+
 
 class ShoppingList(db.Model):
     __bind_key__ = 'cpstnpro'
     __tablename__ = 'shopping_list'
 
     list_id = db.Column(db.Integer, primary_key=True)
-    acc_num = db.Column(db.ForeignKey('usr.acc_num'), index=True)
+    acc_num = db.Column(db.ForeignKey('usr.acc_num'), primary_key=True, index=True)
+    name = db.Column(db.String(100))
     date_created = db.Column(db.DateTime)
 
     usr = relationship('Usr')
 
-    def __init__(self, acc_num, date_created):
+    def __init__(self, acc_num, name, date_created):
         self.acc_num = acc_num
+        self.name = name
         self.date_created = date_created
 
     def add_item(self, itemid, quantity, date):
@@ -290,7 +300,7 @@ class ShoppingList(db.Model):
         items = ListItem.query.filter_by(list_id=self.list_id).all()
 
         status = [{
-            "message": "Items obtained"
+            "message": "Items obtained",
             "Items": items
         }]
 
@@ -309,28 +319,32 @@ class ShoppingList(db.Model):
 
         return status
 
-class ListItem(object):
+
+class ListItem(db.Model):
     """docstring for ListItem."""
 
-    id = db.Column(db.Integer, primary_key=True)
+    __bind_key__ = 'cpstnpro'
+    __tablename__ = 'list_items'
+
     list_id = db.Column(db.ForeignKey('shopping_list.list_id'), primary_key=True, nullable=False, index=True)
     item_id = db.Column(db.ForeignKey('items.item_id'), primary_key=True, nullable=False, index=True)
-    quantity = db.Column(db.Integer)
+    quantity = db.Column(db.Integer, default=1)
     date_added = db.Column(db.DateTime)
 
-    def __init__(self, list_id, item_id, date_added):
+    item = relationship('Item')
+    list = relationship('ShoppingList')
+
+    def __init__(self, list_id, item_id, date_added, quantity=1):
         self.list_id = list_id
         self.item_id = item_id
         self.date_added = date_added
-
-
+        self.quantity = quantity
 
 
 class Usi(db.Model):
     __bind_key__ = 'cpstnpro'
     __tablename__ = 'usi'
 
-    id = db.Column(db.Integer, primary_key=True)
     cart_id = db.Column(db.ForeignKey('shopping_cart.cart_id'), primary_key=True, nullable=False, index=True)
     item_id = db.Column(db.ForeignKey('items.item_id'), primary_key=True, nullable=False, index=True)
     quantity = db.Column(db.Integer)

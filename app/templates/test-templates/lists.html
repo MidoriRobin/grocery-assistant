@@ -1,0 +1,19 @@
+{% extends base.html %}
+
+{% block main %}
+  <div class="container">
+    {% if LoL %}
+      <ul>
+        {% for list in LoL %}
+        <li>
+          <h3>{{ list }}</h3>
+          <button type="button" name="open-lst">Open List</button>
+          <button type="button" name="dlte-lst">Delete List</button>
+        </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+  </div>
+
+{% endblock %}

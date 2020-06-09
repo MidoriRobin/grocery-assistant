@@ -18,6 +18,17 @@
         {% include "header.html" %}
     </header>
     <main>
+      <!-- Needs to be formatted so it displays properly -->
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-block alert-error fade in">
+              <a class="close" data-dismiss="alert">&times;</a>
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
         <div class="container">
             {% block main %}{% endblock %}
         </div>

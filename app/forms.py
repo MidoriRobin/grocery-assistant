@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, Optional
 
 
 class LoginForm(FlaskForm):
@@ -32,3 +32,9 @@ class UsrForm(FlaskForm):
     dietpref =StringField('Dietary Preference',validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Sign Up')
+
+class ListForm(FlaskForm):
+    """docstring for ListForm."""
+
+    listname = StringField('List Name', validators=[DataRequired()])
+    description = StringField('Description', validators=[Optional()])
