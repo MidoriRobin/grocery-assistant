@@ -6,7 +6,7 @@ This file creates your application.
 """
 
 from app import app, db, login_manager
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, session
 from flask_login import login_user, logout_user, current_user, login_required
 from app.forms import LoginForm, UsrForm
 from app.models import *
@@ -19,8 +19,6 @@ from datetime import date
 # Routing for application.
 ###
 
-START = 1335
-END = 1434
 
 #api routes
 
@@ -105,12 +103,19 @@ def load_user(id):
     return Usr.query.get(id)
 
 
-#@app.route('/products')
-#def products():
-    #rows = Products.query.filter_by().all()
-    #return render_template('products.html', prods=rows)
-    #pass
-###
+@app.route('/products')
+def products():
+    rows = Item.query.limit(10).all()
+    return render_template('products.html', prods=rows)
+
+
+@app.route('/products/<itemid>', methods=['GET'])
+def product(itemid):
+
+    item = Item.query.filter_by(item_id=itemid).first()
+    flash("Displaying product")
+    
+    return render_template('/test-templates/product.html', item=item)
 
 #The route can be changed to "TryThese" instead of "Recommended items"
 @app.route('/TryThese/<userid>', methods=['GET'])
@@ -161,11 +166,13 @@ def cart(userid):
     cart_items = usi.query.filter_by(cart_id=cart.cart_id).all()
 
     status = [{
-        "message": "cart successfully fetched"
+        "message": "cart successfully fetched",
         "cart": cart_items
     }]
 
-    return status
+    flash("cart successfully fetched")
+    #return status
+    return render_template('/test-templates/cart.html', list=cart_items)
 
 @app.route('/items/<itemid>/cart/<cartid>', methods=['POST'])
 def add_item_cart(itemid,cartid):
@@ -179,6 +186,7 @@ def add_item_cart(itemid,cartid):
         "message": "item successfully added to cart"
     }]
 
+    flash("item successfully added to cart")
     return status
 
 @app.route('/users/cart/<itemid>', methods=['DELETE'])
@@ -193,6 +201,7 @@ def remove_from_cart(itemid):
         "message": "Item deleted successfully"
     }]
 
+    flash("Item deleted successfully")
     return status
 
 #Lists----------------------------------------------
@@ -207,9 +216,10 @@ def make_list(userid):
     db.session.commit()
 
     status = [{
-        "messsage": "List successfully added"
+        "messsage": "List successfully created"
     }]
 
+    flash("List successfully created")
     return status
 
 @app.route('/users/<userid>/lists', methods=['GET'])
@@ -222,9 +232,11 @@ def view_lists(userid):
         "Message": "Displaying all shopping lists based on user id"
     }]
 
-    return status
+    flash("Displaying all shopping lists based on user id")
+    #return status
+    return render_template('/test-templates/cart.html', LoL=lists)
 
-@app.route('/items/<itemid>/list/listid', methods=['PUT'])
+@app.route('/items/<itemid>/list/<listid>', methods=['PUT'])
 def add_item_list(itemid, listid):
     """Route to add an item to a specific list"""
 
@@ -236,6 +248,7 @@ def add_item_list(itemid, listid):
         "message": "Item added to list"
     }]
 
+    flash("Item added to list")
     return status
 
 @app.route('/users/list/<listid>/<itemid>', methods=['DELETE'])
@@ -250,6 +263,7 @@ def remove_item_list(listid,itemid):
         "message": "Item successfully deleted"
     }]
 
+    flash("Item successfully deleted")
     return status
 
 #Courier----------------------------------------------

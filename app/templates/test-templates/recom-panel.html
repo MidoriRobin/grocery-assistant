@@ -1,0 +1,13 @@
+<!-- recommendation side bar elements -->
+<div class="container">
+  <ul>
+    {% if list %}
+      {% for item in list %}
+          <li>
+            <h3>{{ item }}</h3>
+            <button type="button" name="button">View Item</button>
+          </li>
+      {% endfor %}
+    {% endif %}
+  </ul>
+</div>

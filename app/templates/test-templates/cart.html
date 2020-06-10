@@ -1,0 +1,18 @@
+{% extends base.html %}
+
+{% block main %}
+    <div class="cart">
+      {% if list %}
+        <ul>
+          {% for item in list %}
+              <li>
+                <h3>{{ item }}</h3>
+                <button type="button" name="remove">Remove</button>
+              </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+    </div>
+
+{% endblock %}
