@@ -17,10 +17,20 @@
          <a class="nav-link" href="{{ url_for('login')}}">Login</a>
       </li>
       <li class="nav-item" active>
+         <a class="nav-link" href="{{ url_for('products')}}">Products</a>
+      </li>
+      <li class="nav-item" active>
         {% if current_user.is_authenticated %}
          <a class="nav-link" href="{{ url_for('recomm', userid=current_user.acc_num) }}">How About!</a>
         {% else %}
          <a class="nav-link" href="{{ url_for('recomm', userid=0) }}">How About!</a>
+        {% endif %}
+      </li>
+      <li class="nav-item" active>
+        {% if current_user.is_authenticated %}
+         <a class="nav-link" href="{{ url_for('cart', userid=current_user.acc_num) }}">Cart</a>
+        {% else %}
+         <a class="nav-link" href="{{ url_for('login') }}">Cart</a>
         {% endif %}
       </li>
       <li class="nav-item" active>
