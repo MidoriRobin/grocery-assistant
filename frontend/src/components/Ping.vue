@@ -18,7 +18,10 @@ export default {
         method: 'GET',
       })
         .then((response) => response.json())
-        .then((jsonResponse) => console.log(jsonResponse))
+        .then((jsonResponse) => {
+          this.msg = jsonResponse.message;
+          console.log(jsonResponse);
+        })
         .catch((error) => console.log(error));
     },
   },

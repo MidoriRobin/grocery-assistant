@@ -47,11 +47,11 @@ def secure_page():
     return render_template('secure_page.html')
 
 
-@app.route('/login', methods=['GET','POST'])
+@app.route('/api/login', methods=['GET','POST'])
 def login():
     form = LoginForm()
-
-    if request.method == 'POST' and form.validate_on_submit():
+    #and form.validate_on_submit():
+    if request.method == 'POST':
         if form.username.data:
             username = form.username.data
             password = form.password.data
@@ -61,8 +61,18 @@ def login():
             if user is not None and check_password_hash(user.password, password):
                 login_user(user)
 
-            return redirect(url_for('secure_page'))
-    return render_template('login.html', form=form)
+                status = {
+                    "message":"User sucessfully logged in"
+                }
+
+            #return redirect(url_for('secure_page'))
+
+            else:
+                status = {
+                    "message":"User login unsucessful"
+                }
+
+    return jsonify(status=status)
 
 
 #User sign up route
