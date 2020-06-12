@@ -51,11 +51,12 @@ def login():
             username = form.username.data
             password = form.password.data
 
-            if username in range(1234,1333):
+            if int(username) in range(1234,1333):
                 print("this is a test user..")
                 user = Usr.query.filter_by(acc_num=username).first()
+                print(user)
                 login_user(user)
-
+                session['cartid'] = user.get_cartid()
             else:
                 print("not a test user..")
                 user = Usr.query.filter_by(acc_num=username).first()
@@ -114,7 +115,7 @@ def product(itemid):
 
     item = Item.query.filter_by(item_id=itemid).first()
     flash("Displaying product")
-    
+
     return render_template('/test-templates/product.html', item=item)
 
 #The route can be changed to "TryThese" instead of "Recommended items"
@@ -162,37 +163,37 @@ def cart(userid):
     #Fetching the users shopping cart ID
     cart = ShoppingCart.query.filter_by(acc_num=userid).first()
 
-    #Using this cart ID we get the list of items from the user
-    cart_items = usi.query.filter_by(cart_id=cart.cart_id).all()
+    itemList = cart.fetch_all_items()
 
     status = [{
         "message": "cart successfully fetched",
-        "cart": cart_items
+        "cart": itemList
     }]
 
     flash("cart successfully fetched")
     #return status
-    return render_template('/test-templates/cart.html', list=cart_items)
+    return render_template('/test-templates/cart.html', list=itemList)
 
-@app.route('/items/<itemid>/cart/<cartid>', methods=['POST'])
-def add_item_cart(itemid,cartid):
+@app.route('/items/<itemid>/<qty>/cart/<cartid>', methods=['GET'])
+def add_item_cart(itemid,qty,cartid):
     """Route to add item to a cart"""
 
-    item = Usi(cartid, itemid, quantity, date.today())
+    item = Usi(cartid, itemid, qty, date.today())
     db.session.add(item)
     db.session.commit()
 
-    status = [{
+    status = {
         "message": "item successfully added to cart"
-    }]
+    }
 
+    print(status)
     flash("item successfully added to cart")
-    return status
+    return redirect(url_for('products'))
 
-@app.route('/users/cart/<itemid>', methods=['DELETE'])
-def remove_from_cart(itemid):
+@app.route('/users/<userid>/cart/<itemid>', methods=['GET'])
+def remove_from_cart(userid,itemid):
 
-    item = Usi.query.filter_by(item_id=itemid).first()
+    item = Usi.query.filter_by(cart_id=session['cartid'],item_id=itemid).first()
 
     db.session.delete(item)
     db.session.commit()
@@ -202,7 +203,8 @@ def remove_from_cart(itemid):
     }]
 
     flash("Item deleted successfully")
-    return status
+    # return status
+    return redirect(url_for('cart', userid=current_user.acc_num))
 
 #Lists----------------------------------------------
 @app.route('/users/<userid>/lists', methods=['POST'])

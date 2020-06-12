@@ -136,6 +136,12 @@ class Usr(db.Model):
         self.diet_pref = diet_pref
         self.password = generate_password_hash(password, method='pbkdf2:sha256')
 
+    def get_cartid(self):
+
+        cart = ShoppingCart.query.filter_by(acc_num=self.acc_num).first()
+
+        return cart.cart_id
+
     def is_authenticated(self):
         return True
 
@@ -235,6 +241,17 @@ class ShoppingCart(db.Model):
     def __init__(self, acc_num, date_created):
         this.acc_num = acc_num
         this.date_created = date_created
+
+    def fetch_all_items(self):
+
+        us_items = Usi.query.filter_by(cart_id=self.cart_id).all()
+        print(us_items)
+        items = [value.fetch_item() for value in us_items]
+        print(items)
+        return items
+
+    def add_to_cart(self, itemid, date, quantity=1):
+        pass
 
 
 class Payment(db.Model):
@@ -354,4 +371,10 @@ class Usi(db.Model):
     item = relationship('Item')
 
     def __init__(self, cart_id, item_id, quantity, created_date):
-        pass
+        self.cart_id = cart_id
+        self.item_id = item_id
+        self.quantity = quantity
+        self.created_date = created_date
+
+    def fetch_item(self):
+        return Item.query.filter_by(item_id=self.item_id).first()

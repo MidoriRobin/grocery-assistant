@@ -1,4 +1,4 @@
-{% extends base.html %}
+{% extends "base.html" %}
 
 {% block main %}
     <div class="cart">
@@ -7,7 +7,12 @@
           {% for item in list %}
               <li>
                 <h3>{{ item }}</h3>
-                <button type="button" name="remove">Remove</button>
+                <button type="button"
+                onclick="window.location.href='{{ url_for('remove_from_cart', userid=current_user.acc_num, itemid=item.item_id) }}'"
+                name="remove">Remove</button>
+                <button type="button"
+                onclick="window.location.href='{{ url_for('product', itemid=item.item_id) }}'"
+                name="view-item">View Item</button>
               </li>
           {% endfor %}
         </ul>
