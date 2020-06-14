@@ -35,7 +35,7 @@ export default {
       fetch('http://localhost:5000/api/login', {
         method: 'POST',
         body: formData,
-        headers: {},
+        // headers: {},
         // credentials: 'same-origin',
       })
         .then((response) => response.json())

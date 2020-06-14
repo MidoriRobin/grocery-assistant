@@ -15,13 +15,14 @@ app.config['SQLALCHEMY_BINDS'] = {
 
 db = SQLAlchemy(app)
 
+# enable CORS
+cors = CORS(app, resources={r'/api/*': {'origins': '*'}})
+
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'  # necessary to tell Flask-Login what the default route is for the login page
 login_manager.login_message_category = "info"  # customize the flash message category
 
-# enable CORS
-CORS(app, resources={r'/*': {'origins': '*'}})
 
 app.config.from_object(__name__)
 from app import views
