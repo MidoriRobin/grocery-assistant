@@ -1,4 +1,7 @@
 import csv
+import bz2
+import pickle
+import _pickle as cPickle
 
 class RecomHandler():
     """docstring for recomHandler."""
@@ -18,7 +21,7 @@ class RecomHandler():
         pid = []
         rating = []
 
-        with open('./predRatings.csv', newline='') as csvfile:
+        with open('./data/predRatings.csv', newline='') as csvfile:
           reader = csv.DictReader(csvfile)
           for row in reader:
             uid.append(row['acc_num'])
@@ -37,17 +40,23 @@ class RecomHandler():
         Accepts a user's id  and a dictionary as parameters and fetches
         the list of products of which various ratings have been generated.
         """
+
+        print(recDict)
         print("Generating recommendations for specified user")
 
         if userid in set(recDict['uid']):
-          sIndex = recDict['uid'].index(userid)
-          numOfRecc = recDict['uid'].count(userid)
+            sIndex = recDict['uid'].index(userid)
+            print(sIndex)
+            numOfRecc = recDict['uid'].count(userid)
+            print(numOfRecc)
         else:
           #Might need an exception here
           return ("No Recommendations have been made for that user")
 
-        ratings = recDict['rating'][sIndex:numOfRecc]
-        products = recDict['pid'][sIndex:numOfRecc]
+        ratings = recDict['rating'][sIndex:(sIndex+numOfRecc)]
+        print(ratings)
+        products = recDict['pid'][sIndex:(sIndex+numOfRecc)]
+        print(products)
 
         print("Outputting..")
         return ratings, products
@@ -70,3 +79,22 @@ class RecomHandler():
             return "Invalid, selection"
         else:
             return p_List[pref]
+
+    def decompress_pickle(file):
+        data = bz2.BZ2File(file, 'rb')
+        data = cPickle.load(data)
+        return data
+
+    @staticmethod
+    def cont_bsd_fltr(itemid, num=5):
+
+        data = decompress_pickle('Cbfilter_comp.pbz2')
+
+        result = data.recommend(itemid, num)
+
+        return result
+
+
+    # Example of use
+    # result = data.recommend(item_id = 25671, num=10)
+    # print(result)

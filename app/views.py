@@ -66,6 +66,13 @@ def login():
             return redirect(url_for('secure_page'))
     return render_template('login.html', form=form)
 
+@app.route('/logout')
+def logout():
+    session.pop('logged_in', None)
+    session.pop('cartid', None)
+    logout_user()
+    flash('You were logged out', 'success')
+    return redirect(url_for('home'))
 
 #User sign up route
 @app.route('/signup', methods=['GET','POST'])
@@ -112,7 +119,7 @@ def products():
 
 @app.route('/products/<itemid>', methods=['GET'])
 def product(itemid):
-
+    list = []
     item = Item.query.filter_by(item_id=itemid).first()
     flash("Displaying product")
 
@@ -134,7 +141,7 @@ def recomm(userid):
     cUser = Usr.query.filter_by(acc_num=userid).first()
 
 # If statement to check if the user is a new user and has any previous recommendation
-    if is_new(cUser.acc_num, recomD["uid"]):
+    if is_new(userid, recomD["uid"]):
         print("New user!")
         uRecom = RecomHandler.diet_cnvrtr(cUser.diet_pref)
         recomProd = fetch_recomm(1,uRecom)
