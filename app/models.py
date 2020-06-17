@@ -142,6 +142,11 @@ class Usr(db.Model):
 
         return cart.cart_id
 
+    def get_lists(self):
+        lists = ShoppingList.query.filter_by(acc_num=self.acc_num).all()
+
+        return lists
+
     def is_authenticated(self):
         return True
 
@@ -299,9 +304,9 @@ class ShoppingList(db.Model):
         self.name = name
         self.date_created = date_created
 
-    def add_item(self, itemid, quantity, date):
+    def add_item(self, itemid, date, quantity=1):
 
-        newItem = ListItem(self.list_id, itemid, quantity, date)
+        newItem = ListItem(self.list_id, itemid, date, quantity)
 
         db.session.add(newItem)
         db.session.commit()
@@ -321,7 +326,7 @@ class ShoppingList(db.Model):
             "Items": items
         }]
 
-        return status
+        return items
 
     def remove_item(self, itemid):
 
@@ -336,6 +341,8 @@ class ShoppingList(db.Model):
 
         return status
 
+    def __repr__(self):
+        return '<List name %r ID: %r>' %  (self.name, self.list_id)
 
 class ListItem(db.Model):
     """docstring for ListItem."""

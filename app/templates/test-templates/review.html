@@ -1,0 +1,18 @@
+<!-- review panel -->
+<div class="">
+    <form class="review" action="{{url_for('review_item',itemid=item.item_id)}}" method="post">
+        {{ revform.itemid(value=item.item_id)}}
+
+        {% if current_user.is_authenticated %}
+            {{ revform.userid(value=current_user.acc_num) }}
+        {% else %}
+            {{ revform.userid(value=0) }}
+        {% endif %}
+
+        <div class="">
+            {{ revform.rating }}
+        </div>
+
+        <button type="submit" name="button">rate</button>
+    </form>
+</div>

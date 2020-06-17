@@ -8,7 +8,7 @@ This file creates your application.
 from app import app, db, login_manager
 from flask import render_template, request, redirect, url_for, flash, session
 from flask_login import login_user, logout_user, current_user, login_required
-from app.forms import LoginForm, UsrForm
+from app.forms import *
 from app.models import *
 from werkzeug.security import check_password_hash
 import random
@@ -67,6 +67,7 @@ def login():
     return render_template('login.html', form=form)
 
 @app.route('/logout')
+@login_required
 def logout():
     session.pop('logged_in', None)
     session.pop('cartid', None)
@@ -113,17 +114,40 @@ def load_user(id):
 
 @app.route('/products')
 def products():
+    thing = 10
+
+    page = request.args.get('page', 1, type=int)
+    prodos = Item.query.filter_by().paginate(page,10,False)
+
     rows = Item.query.limit(10).all()
-    return render_template('products.html', prods=rows)
+
+    if prodos.has_next:
+        next_url = url_for('products', page=prodos.next_num)
+    else:
+        next_url = None
+
+    if prodos.has_prev:
+        prev_url = url_for('products', page=prodos.prev_num)
+    else:
+        prev_url = None
+
+    return render_template('products.html', prods=rows, prodos=prodos.items, next=next_url, prev = prev_url)
 
 
 @app.route('/products/<itemid>', methods=['GET'])
 def product(itemid):
     list = []
+    revform = ReviewForm()
+    listform = ItemListForm()
+    # list = RecomHandler.cont_bsd_fltr(1)
+    print(list)
     item = Item.query.filter_by(item_id=itemid).first()
+
+    slists = ShoppingList.query.filter_by(acc_num=current_user.acc_num).all()
+    listform.listname.choices = [(list.list_id, list.name) for list in slists]
     flash("Displaying product")
 
-    return render_template('/test-templates/product.html', item=item)
+    return render_template('/test-templates/product.html', item=item, revform=revform, listform=listform)
 
 #The route can be changed to "TryThese" instead of "Recommended items"
 @app.route('/TryThese/<userid>', methods=['GET'])
@@ -164,6 +188,7 @@ def recomm(userid):
 
 #Cart----------------------------------------------
 @app.route('/users/<userid>/cart', methods=['GET'])
+@login_required
 def cart(userid):
     """View items in users cart"""
 
@@ -182,6 +207,7 @@ def cart(userid):
     return render_template('/test-templates/cart.html', list=itemList)
 
 @app.route('/items/<itemid>/<qty>/cart/<cartid>', methods=['GET'])
+@login_required
 def add_item_cart(itemid,qty,cartid):
     """Route to add item to a cart"""
 
@@ -198,6 +224,7 @@ def add_item_cart(itemid,qty,cartid):
     return redirect(url_for('products'))
 
 @app.route('/users/<userid>/cart/<itemid>', methods=['GET'])
+@login_required
 def remove_from_cart(userid,itemid):
 
     item = Usi.query.filter_by(cart_id=session['cartid'],item_id=itemid).first()
@@ -215,23 +242,26 @@ def remove_from_cart(userid,itemid):
 
 #Lists----------------------------------------------
 @app.route('/users/<userid>/lists', methods=['POST'])
+@login_required
 def make_list(userid):
     """Route to add a new list to a user account"""
 
+    if request.method == 'POST':
+        list = ShoppingList(userid, request.form['name'], date.today())
 
-    list = ShoppingList(userid,date.today())
-
-    db.session.add(list)
-    db.session.commit()
+        db.session.add(list)
+        db.session.commit()
 
     status = [{
         "messsage": "List successfully created"
     }]
 
     flash("List successfully created")
-    return status
+    # return status
+    return redirect(url_for('view_lists'))
 
 @app.route('/users/<userid>/lists', methods=['GET'])
+@login_required
 def view_lists(userid):
     """Route to view all lists of a specific user"""
 
@@ -243,25 +273,48 @@ def view_lists(userid):
 
     flash("Displaying all shopping lists based on user id")
     #return status
-    return render_template('/test-templates/cart.html', LoL=lists)
+    return render_template('/test-templates/lists.html', LoL=lists)
 
-@app.route('/items/<itemid>/list/<listid>', methods=['PUT'])
-def add_item_list(itemid, listid):
+@app.route('/users/<userid>/lists/<listid>', methods=['GET'])
+@login_required
+def list(userid,listid):
+    """Route to view a list of a specific user"""
+
+    list = ShoppingList.query.filter_by(list_id=listid).first()
+    items = list.view_items()
+    status = [{
+        "Message": "Displaying all items in the shopping list chosen"
+    }]
+
+    flash("Displaying all items in the shopping list chosen")
+    #return status
+    return render_template('/test-templates/list.html', items=items, list=list)
+
+@app.route('/items/<itemid>/list/', methods=['POST'])
+@login_required
+def add_item_list(itemid):
     """Route to add an item to a specific list"""
 
-    sList = ShoppingList.query.filter_by(list_id=listid).first()
+    #sList = ShoppingList.query.filter_by(list_id=listid).first()
 
-    sList.add_item(itemid, quantity, date.today)
+    if request.method == 'POST':
+        # sList.add_item(itemid, date.today)
+
+        nItem = ListItem(request.form['listname'], itemid, date.today(), request.form['quantity'])
+        db.session.add(nItem)
+        db.session.commit()
 
     status = [{
         "message": "Item added to list"
     }]
 
     flash("Item added to list")
-    return status
+    # return status
+    return redirect(url_for('product',itemid=itemid))
 
-@app.route('/users/list/<listid>/<itemid>', methods=['DELETE'])
-def remove_item_list(listid,itemid):
+@app.route('/users/list/<listid>/<itemid>', methods=['GET'])
+@login_required
+def remove_from_list(listid,itemid):
 
     item = ListItem.query.filter_by(list_id=listid, item_id=itemid).first()
 
@@ -273,7 +326,8 @@ def remove_item_list(listid,itemid):
     }]
 
     flash("Item successfully deleted")
-    return status
+    # return status
+    return redirect(url_for('list', listid=listid, userid=current_user.acc_num))
 
 #Courier----------------------------------------------
 @app.route('/courier', methods=['GET'])
@@ -292,14 +346,17 @@ def view_order(arg):
 
 @app.route('/user/<userid>/order', methods=['POST'])
 def make_order(arg):
+    #IMplement simulated order cart-table > order-table
     pass
 
 #Review----------------------------------------------
 
-@app.route('/item/<itemid>/review/<rating>')
-def review_item(itemid, rating):
+@app.route('/items/<itemid>/review/', methods=['GET','POST'])
 
-    review = Review(user_id,itemid,rating)
+def review_item(itemid):
+
+    if request.method == 'POST':
+        review = Review(request.form['userid'],request.form['itemid'],request.form['rating'])
 
     db.session.add(review)
     db.session.commit()
@@ -308,7 +365,10 @@ def review_item(itemid, rating):
         "message": "Review successfully added"
     }]
 
-    return status
+    flash("Review successfully added")
+    # return status
+    return redirect(url_for('products',itemid=itemid))
+
 
 #Locally required functions
 

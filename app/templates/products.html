@@ -4,17 +4,43 @@
 
   <h1> Aisle 1</h1>
   <ul class="catalog">
-    {% for prod in prods %}
-      <li>
-        <h4>{{prod.item_id}}</h4>
-        <div class="">
-          {{ prod }}
-        </div>
-        <button type="button"
-        onclick="window.location.href='{{ url_for('product', itemid=prod.item_id) }}'"
-        name="view-item">View Item</button>
-      </li>
-    {% endfor %}
+    {% if prodos %}
+        {% for prod in prodos %}
+        <li>
+          <h4>{{prod.item_id}}</h4>
+          <div class="">
+            {{ prod }}
+          </div>
+          <button type="button"
+          onclick="window.location.href='{{ url_for('product', itemid=prod.item_id) }}'"
+          name="view-item">View Item</button>
+        </li>
+        {% endfor %}
+    {% else %}
+        {% for prod in prods %}
+        <li>
+          <h4>{{prod.item_id}}</h4>
+          <div class="">
+            {{ prod }}
+          </div>
+          <button type="button"
+          onclick="window.location.href='{{ url_for('product', itemid=prod.item_id) }}'"
+          name="view-item">View Item</button>
+        </li>
+        {% endfor %}
+    {% endif %}
   </ul>
+  {% if prev %}
+      <button type="button"
+      onclick="window.location.href='{{ prev }}'"
+      name="button"> &lt Prev Page </button>
+  {% endif %}
+
+  {% if next %}
+      <button type="button"
+      onclick="window.location.href='{{ next }}'"
+      name="button">Next Page &gt </button>
+  {% endif %}
+
 
 {% endblock %}

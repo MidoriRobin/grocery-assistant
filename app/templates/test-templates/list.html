@@ -3,18 +3,21 @@
 {% block main %}
   <div class="container">
 
-    {% if list %}
+    {% if items %}
         <ul>
-          {% for item in list %}
+          {% for item in items %}
               <li>
                 <h3>{{ item }}</h3>
                 <button type="button" class="cart-add" name="c-add">Add to cart</button>
                 <!-- might need a drop down menu here -->
-                <button type="button" class="list-add" name="l-add">Add to list</button>
+                <button type="button" class="list-remove"
+                onclick="window.location.href='{{ url_for('remove_from_list', listid=list.list_id, itemid=item.item_id) }}'"
+                name="l-rem">Remove from list</button>
               </li>
           {% endfor %}
-
         </ul>
+    {% else %}
+        <p>No items in list</p>
     {% endif %}
 
 

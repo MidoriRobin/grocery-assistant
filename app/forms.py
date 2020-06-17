@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, IntegerField, HiddenField, PasswordField, BooleanField, SubmitField, SelectField
 from wtforms.validators import DataRequired, Optional
 
 
@@ -38,3 +38,16 @@ class ListForm(FlaskForm):
 
     listname = StringField('List Name', validators=[DataRequired()])
     description = StringField('Description', validators=[Optional()])
+
+class ItemListForm(FlaskForm):
+    """docstring for ItemListForm."""
+
+    listname = SelectField('List Name', validators=[DataRequired()])
+    quantity = IntegerField('Quantity', validators=[Optional()])
+
+class ReviewForm(FlaskForm):
+    """docstring for ReviewForm."""
+
+    itemid = HiddenField('itemid', validators=[DataRequired()])
+    userid = HiddenField('userid', validators=[DataRequired()])
+    rating = SelectField('Rating', choices=[(1,'1'),(2,'2'),(3,'3'),(4,'4'),(5,'5')], validators=[DataRequired()])

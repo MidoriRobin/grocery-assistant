@@ -7,8 +7,13 @@
         {% for list in LoL %}
         <li>
           <h3>{{ list }}</h3>
-          <button type="button" name="open-lst">Open List</button>
-          <button type="button" name="dlte-lst">Delete List</button>
+          <button type="button"
+          onclick="window.location.href='{{ url_for('list', userid=current_user.acc_num, listid=list.list_id) }}'"
+          name="open-lst">Open List</button>
+
+          <button type="button"
+
+          name="dlte-lst">Delete List</button>
         </li>
         {% endfor %}
       </ul>

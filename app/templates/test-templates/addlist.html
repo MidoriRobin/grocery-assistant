@@ -1,0 +1,12 @@
+<!-- review panel -->
+<div class="">
+    <form class="add-list" action="{{url_for('add_item_list', itemid=item.item_id)}}" method="post">
+        <div class="">
+            {{ listform.listname }}
+        </div>
+        <div class="">
+            {{ listform.quantity }}
+        </div>
+        <button type="submit" name="button">Add to list</button>
+    </form>
+</div>
