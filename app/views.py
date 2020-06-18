@@ -32,6 +32,10 @@ def home():
 @app.route('/about/')
 def about():
     """Render the website's about page."""
+
+    product = ShoppingCart.query.filter_by(acc_num=1323).order_by(ShoppingCart.cart_id.desc()).first()
+    print(product)
+
     return render_template('about.html')
 
 

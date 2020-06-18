@@ -221,16 +221,21 @@ class Order(db.Model):
     __tablename__ = 'orders'
 
     order_id = db.Column(db.Integer, primary_key=True)
+    cart_id = db.Column(db.ForeignKey('shopping_cart.cart_id'), index=True)
     acc_num = db.Column(db.ForeignKey('usr.acc_num'), index=True)
+    date_ordered = db.Column(db.DateTime)
     deliv_time = db.Column(db.String(100))
     sale_value = db.Column(DECIMAL(10, 2))
 
     usr = relationship('Usr')
+    cart = relationship('ShoppingCart')
 
-    def __init__(self, acc_num, deliv_time, cost):
+    def __init__(self, acc_num, cartid, date_order, cost, deliv_time="N/A"):
         self.acc_num = acc_num
+        self.cart_id = cart_id
         self.deliv_id = deliv_time
         self.sale_value = cost
+        self.date_ordered = date_order
 
 
 class ShoppingCart(db.Model):
@@ -343,6 +348,7 @@ class ShoppingList(db.Model):
 
     def __repr__(self):
         return '<List name %r ID: %r>' %  (self.name, self.list_id)
+
 
 class ListItem(db.Model):
     """docstring for ListItem."""
