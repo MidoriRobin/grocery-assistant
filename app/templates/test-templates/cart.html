@@ -17,7 +17,9 @@
           {% endfor %}
         </ul>
       {% endif %}
-
+      <!-- <button type="button"
+      onclick="window.location.href='{{ url_for('make_order', userid=current_user.acc_num) }}'"
+      name="button">Checkout</button> -->
     </div>
 
 {% endblock %}

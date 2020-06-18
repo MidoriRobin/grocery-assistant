@@ -300,7 +300,10 @@ def add_item_list(itemid):
     if request.method == 'POST':
         # sList.add_item(itemid, date.today)
 
-        nItem = ListItem(request.form['listname'], itemid, date.today(), request.form['quantity'])
+        if request.form['quantity'] != '':
+            nItem = ListItem(request.form['listname'], itemid, date.today(), request.form['quantity'])
+        else:
+            nItem = ListItem(request.form['listname'], itemid, date.today(), 1)
         db.session.add(nItem)
         db.session.commit()
 
@@ -345,7 +348,7 @@ def view_order(arg):
     pass
 
 @app.route('/user/<userid>/order', methods=['POST'])
-def make_order(arg):
+def make_order(userid):
     #IMplement simulated order cart-table > order-table
     pass
 
@@ -356,9 +359,14 @@ def make_order(arg):
 def review_item(itemid):
 
     if request.method == 'POST':
-        review = Review(request.form['userid'],request.form['itemid'],request.form['rating'])
+        rCheck = Review.query.filter_by(acc_num=request.form['userid'], item_id=request.form['itemid']).first()
 
-    db.session.add(review)
+        if rCheck:
+            rCheck.rating = request.form['rating']
+        else:
+            review = Review(request.form['userid'],request.form['itemid'],request.form['rating'])
+            db.session.add(review)
+
     db.session.commit()
 
     status = [{

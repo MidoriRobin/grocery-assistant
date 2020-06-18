@@ -8,7 +8,9 @@
           {% for item in items %}
               <li>
                 <h3>{{ item }}</h3>
-                <button type="button" class="cart-add" name="c-add">Add to cart</button>
+                <button type="button" class="cart-add"
+                onclick="window.location.href='{{ url_for('add_item_cart', itemid=item.item_id, qty=1, cartid=session['cartid']) }}'"
+                name="c-add">Add to cart</button>
                 <!-- might need a drop down menu here -->
                 <button type="button" class="list-remove"
                 onclick="window.location.href='{{ url_for('remove_from_list', listid=list.list_id, itemid=item.item_id) }}'"
