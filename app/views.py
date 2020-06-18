@@ -6,9 +6,10 @@ This file creates your application.
 """
 
 from app import app, db, login_manager
-from flask import render_template, request, redirect, url_for, flash, session
+from flask import render_template, request, redirect, url_for, flash, session, jsonify
 from flask_login import login_user, logout_user, current_user, login_required
-from app.forms import *
+from flask_cors import cross_origin
+from app.forms import LoginForm, UsrForm
 from app.models import *
 from werkzeug.security import check_password_hash
 import random
@@ -29,6 +30,12 @@ def home():
     return render_template('home.html',products=products)
 
 
+@app.route('/api/ping')
+def ping():
+
+    message = "New Ping"
+    return jsonify(message=message)
+
 @app.route('/about/')
 def about():
     """Render the website's about page."""
@@ -46,11 +53,11 @@ def secure_page():
     return render_template('secure_page.html')
 
 
-@app.route('/login', methods=['GET','POST'])
+@app.route('/api/login', methods=['POST'])
 def login():
     form = LoginForm()
-
-    if request.method == 'POST' and form.validate_on_submit():
+    #and form.validate_on_submit():
+    if request.method == 'POST':
         if form.username.data:
             username = form.username.data
             password = form.password.data
@@ -67,8 +74,7 @@ def login():
                 if user is not None and check_password_hash(user.password, password):
                     login_user(user)
 
-            return redirect(url_for('secure_page'))
-    return render_template('login.html', form=form)
+    return jsonify(status=status)
 
 @app.route('/logout')
 @login_required
@@ -499,4 +505,4 @@ def page_not_found(error):
 
 
 if __name__ == '__main__':
-    app.run(debug=True,host="0.0.0.0",port="8080")
+    app.run(debug=True,host="0.0.0.0",port="5000")

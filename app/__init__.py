@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from flask_cors import CORS
 import sqlacodegen
 
 app = Flask(__name__)
@@ -13,6 +14,9 @@ app.config['SQLALCHEMY_BINDS'] = {
 }
 
 db = SQLAlchemy(app)
+
+# enable CORS
+cors = CORS(app, resources={r'/api/*': {'origins': '*'}})
 
 login_manager = LoginManager()
 login_manager.init_app(app)
