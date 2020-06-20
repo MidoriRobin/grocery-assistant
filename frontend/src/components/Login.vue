@@ -1,6 +1,8 @@
 <template>
   <div class="login-form text-center">
     <h2>Please Log in</h2>
+    <h4 v-if="error"> Error: {{ error }} </h4>
+    <h5 v-if="message"> Message: {{ message }} </h5>
     <form class="form-login" @submit.prevent="LoginUser" id="loginForm" method="post">
       <div class="form-group">
         <label for="username" class="sr-only">Username</label>
@@ -18,11 +20,13 @@
 </template>
 
 <script>
+/*eslint-disable*/
 export default {
   name: 'Login',
   data() {
     return {
       error: '',
+      message: '',
     };
   },
   methods: {
@@ -35,11 +39,16 @@ export default {
       fetch('http://localhost:5000/api/login', {
         method: 'POST',
         body: formData,
-        // headers: {},
+        headers: {},
         // credentials: 'same-origin',
       })
-        .then((response) => response.json())
-        .then((jsonResponse) => console.log(jsonResponse))
+        .then((response) => {
+            return response.json();
+        })
+        .then((jsonResponse) => {
+            this.message = jsonResponse.status.message;
+            console.log(jsonResponse);
+        })
         .catch((error) => {
           console.log(error);
           this.error = error;

@@ -9,7 +9,7 @@ from app import app, db, login_manager
 from flask import render_template, request, redirect, url_for, flash, session, jsonify
 from flask_login import login_user, logout_user, current_user, login_required
 from flask_cors import cross_origin
-from app.forms import LoginForm, UsrForm
+from app.forms import *
 from app.models import *
 from werkzeug.security import check_password_hash
 import random
@@ -29,6 +29,18 @@ def home():
     products = Products.query.filter_by().all()
     return render_template('home.html',products=products)
 
+def form_errors(form):
+    error_messages = []
+    """Collects form errors"""
+    for field, errors in form.errors.items():
+        for error in errors:
+            message = u"Error in the %s field - %s" % (
+                    getattr(form, field).label.text,
+                    error
+                )
+            error_messages.append(message)
+
+    return error_messages
 
 @app.route('/api/ping')
 def ping():
@@ -40,8 +52,10 @@ def ping():
 def about():
     """Render the website's about page."""
 
-    product = ShoppingCart.query.filter_by(acc_num=1323).order_by(ShoppingCart.cart_id.desc()).first()
-    print(product)
+    # product = ShoppingCart.query.filter_by(acc_num=1323).order_by(ShoppingCart.cart_id.desc()).first()
+    # product = Item.query.filter_by(item_id=1).first()
+    person = ShoppingCart.query.filter_by(acc_num=1323).first()
+    print(person.__dict__)
 
     return render_template('about.html')
 
@@ -58,21 +72,40 @@ def login():
     form = LoginForm()
     #and form.validate_on_submit():
     if request.method == 'POST':
-        if form.username.data:
-            username = form.username.data
-            password = form.password.data
+        username = request.form['username']
+        password = request.form['password']
 
-            if int(username) in range(1234,1333):
-                print("this is a test user..")
-                user = Usr.query.filter_by(acc_num=username).first()
-                print(user)
+        if int(username) in range(1234,1333):
+            print("this is a test user..")
+            user = Usr.query.filter_by(acc_num=username).first()
+            login_user(user)
+            session['cartid'] = user.get_cartid()
+            status = {
+                "message": "User successfully logged in",
+                "user": user
+            }
+
+        elif int(username) >= 1333:
+            print("not a test user..")
+            user = Usr.query.filter_by(acc_num=username).first()
+            if user is not None and check_password_hash(user.password, password):
                 login_user(user)
                 session['cartid'] = user.get_cartid()
+                status = {
+                    "message": "User successfully logged in",
+                    "user": user
+                }
             else:
-                print("not a test user..")
-                user = Usr.query.filter_by(acc_num=username).first()
-                if user is not None and check_password_hash(user.password, password):
-                    login_user(user)
+                status = {
+                    "message": "Invalid password or no such user exists"
+                }
+        else:
+            status = {
+                "message": "Error in login attempt",
+                "errors": [
+                    form_errors(form)
+                ]
+            }
 
     return jsonify(status=status)
 
@@ -83,10 +116,16 @@ def logout():
     session.pop('cartid', None)
     logout_user()
     flash('You were logged out', 'success')
-    return redirect(url_for('home'))
+
+    status = {
+        "message": "User logged out"
+    }
+
+    # return redirect(url_for('home'))
+    return jsonify(status)
 
 #User sign up route
-@app.route('/signup', methods=['GET','POST'])
+@app.route('/api/signup', methods=['GET','POST'])
 def signup():
     form = UsrForm()
     #Collect data from form and save in database
@@ -112,9 +151,21 @@ def signup():
         db.session.commit()
 
         flash('success','')
-        return redirect(url_for('home'))
-    return render_template('signup.html', form=form)
 
+        status = {
+            "message": "user successfully logged in"
+        }
+
+    else:
+        status = {
+            "errors":[
+                form_errors(form)
+            ]
+        }
+        # return redirect(url_for('home'))
+    # return render_template('signup.html', form=form)
+
+    return jsonify(status=status)
 
 
 @login_manager.user_loader
@@ -122,7 +173,7 @@ def load_user(id):
     return Usr.query.get(id)
 
 
-@app.route('/products')
+@app.route('/api/products')
 def products():
     thing = 10
 
@@ -141,10 +192,19 @@ def products():
     else:
         prev_url = None
 
-    return render_template('products.html', prods=rows, prodos=prodos.items, next=next_url, prev = prev_url)
+    # return render_template('products.html', prods=rows, prodos=prodos.items, next=next_url, prev = prev_url)
+
+    status = {
+        "current_page": page,
+        "prev_page": prodos.prev_num,
+        "next_page": prodos.next_num,
+        "products": [product.to_dict() for product in prodos.items],
+    }
+
+    return jsonify(status=status)
 
 
-@app.route('/products/<itemid>', methods=['GET'])
+@app.route('/api/products/<itemid>', methods=['GET'])
 def product(itemid):
     list = []
     revform = ReviewForm()
@@ -153,15 +213,27 @@ def product(itemid):
     print(list)
     item = Item.query.filter_by(item_id=itemid).first()
 
-    slists = ShoppingList.query.filter_by(acc_num=current_user.acc_num).all()
-    listform.listname.choices = [(list.list_id, list.name) for list in slists]
+    if current_user.is_active:
+        slists = ShoppingList.query.filter_by(acc_num=current_user.acc_num).all()
+        listform.listname.choices = [(list.list_id, list.name) for list in slists]
+    else:
+        slists = []
+
     flash("Displaying product")
 
-    return render_template('/test-templates/product.html', item=item, revform=revform, listform=listform)
+    status = {
+        "message": "Successfully fetched item",
+        "item": item.to_dict(),
+        "userlists": [list.to_dict() for list in slists if list != []]
+    }
+
+    # return render_template('/test-templates/product.html', item=item, revform=revform, listform=listform)
+
+    return jsonify(status=status)
 
 #The route can be changed to "TryThese" instead of "Recommended items"
-@app.route('/TryThese/<userid>', methods=['GET'])
-@login_required
+@app.route('/api/TryThese/<userid>', methods=['GET'])
+# @login_required
 def recomm(userid):
 
     """Renders the recommendation page for a specific user based on the
@@ -194,30 +266,39 @@ def recomm(userid):
 # W/o Dummy products
     randPred = rdmize_predictions(recomProd)
     print(randPred)
-    return render_template('recommendation.html', recom=randPred)
+
+    status = {
+        "message": "Recommended items obtained",
+        "items": [item.to_dict() for item in randPred]
+    }
+
+    # return render_template('recommendation.html', recom=randPred)
+    return jsonify(status=status)
 
 #Cart----------------------------------------------
-@app.route('/users/<userid>/cart', methods=['GET'])
-@login_required
+@app.route('/api/users/<userid>/cart', methods=['GET'])
+# @login_required
 def cart(userid):
     """View items in users cart"""
 
     #Fetching the users shopping cart ID
-    cart = ShoppingCart.query.filter_by(acc_num=userid).first()
+    cart = ShoppingCart.query.filter_by(acc_num=userid).order_by(ShoppingCart.cart_id.desc()).first()
 
     itemList = cart.fetch_all_items()
 
-    status = [{
+    status = {
         "message": "cart successfully fetched",
-        "cart": itemList
-    }]
+        "cart": [item.to_dict() for item in itemList],
+        "total_cost": cart.sum_items()
+    }
 
     flash("cart successfully fetched")
-    #return status
-    return render_template('/test-templates/cart.html', list=itemList)
+    # return render_template('/test-templates/cart.html', list=itemList)
 
-@app.route('/items/<itemid>/<qty>/cart/<cartid>', methods=['GET'])
-@login_required
+    return jsonify(status=status)
+
+@app.route('/api/items/<itemid>/<qty>/cart/', methods=['POST'])
+# @login_required
 def add_item_cart(itemid,qty,cartid):
     """Route to add item to a cart"""
 
@@ -225,16 +306,22 @@ def add_item_cart(itemid,qty,cartid):
     db.session.add(item)
     db.session.commit()
 
+    item = Item.query.filter_by(item_id=itemid).first()
+
     status = {
-        "message": "item successfully added to cart"
+        "message": "item successfully added to cart",
+        "item": item.item_name,
+        "description": item.desc_item
     }
 
     print(status)
     flash("item successfully added to cart")
-    return redirect(url_for('products'))
+    # return redirect(url_for('products'))
 
-@app.route('/users/<userid>/cart/<itemid>', methods=['GET'])
-@login_required
+    return jsonify(status=status)
+
+@app.route('/api/users/<userid>/cart/<itemid>', methods=['DELETE'])
+# @login_required
 def remove_from_cart(userid,itemid):
 
     item = Usi.query.filter_by(cart_id=session['cartid'],item_id=itemid).first()
@@ -242,17 +329,19 @@ def remove_from_cart(userid,itemid):
     db.session.delete(item)
     db.session.commit()
 
-    status = [{
-        "message": "Item deleted successfully"
-    }]
+    status = {
+        "message": "Item removed from cart successfully",
+        "item": Item.query.filter_by(item_id=itemid).first().to_dict()
+    }
 
     flash("Item deleted successfully")
     # return status
-    return redirect(url_for('cart', userid=current_user.acc_num))
+    # return redirect(url_for('cart', userid=current_user.acc_num))
+    return jsonify(status=status)
 
 #Lists----------------------------------------------
-@app.route('/users/<userid>/lists', methods=['POST'])
-@login_required
+@app.route('/api/users/<userid>/lists', methods=['POST'])
+# @login_required
 def make_list(userid):
     """Route to add a new list to a user account"""
 
@@ -262,47 +351,53 @@ def make_list(userid):
         db.session.add(list)
         db.session.commit()
 
-    status = [{
-        "messsage": "List successfully created"
-    }]
+    status = {
+        "messsage": "List successfully created",
+        "list": request.form['name']
+    }
 
     flash("List successfully created")
     # return status
-    return redirect(url_for('view_lists'))
+    # return redirect(url_for('view_lists'))
+    return jsonify(status=status)
 
-@app.route('/users/<userid>/lists', methods=['GET'])
-@login_required
+@app.route('/api/users/<userid>/lists', methods=['GET'])
+# @login_required
 def view_lists(userid):
     """Route to view all lists of a specific user"""
 
     lists = ShoppingList.query.filter_by(acc_num=userid).all()
 
-    status = [{
-        "Message": "Displaying all shopping lists based on user id"
-    }]
+    status = {
+        "Message": "Displaying all shopping lists based on user id",
+        "lists": [list.to_dict() for list in lists]
+    }
 
     flash("Displaying all shopping lists based on user id")
     #return status
-    return render_template('/test-templates/lists.html', LoL=lists)
+    # return render_template('/test-templates/lists.html', LoL=lists)
+    return jsonify(status=status)
 
-@app.route('/users/<userid>/lists/<listid>', methods=['GET'])
-@login_required
+@app.route('/api/users/<userid>/lists/<listid>', methods=['GET'])
+# @login_required
 def list(userid,listid):
     """Route to view a list of a specific user"""
 
     list = ShoppingList.query.filter_by(list_id=listid).first()
     items = list.view_items()
-    status = [{
-        "Message": "Displaying all items in the shopping list chosen"
-    }]
+    status = {
+        "message": "Displaying all items in the shopping list chosen",
+        "items": [item.to_dict() for item in items]
+    }
 
     flash("Displaying all items in the shopping list chosen")
     #return status
-    return render_template('/test-templates/list.html', items=items, list=list)
+    # return render_template('/test-templates/list.html', items=items, list=list)
+    return jsonify(status=status)
 
-@app.route('/items/<itemid>/list/', methods=['POST'])
-@login_required
-def add_item_list(itemid):
+@app.route('/api/items/<itemid>/lists/<listid>', methods=['POST'])
+# @login_required
+def add_item_list(itemid,listid):
     """Route to add an item to a specific list"""
 
     #sList = ShoppingList.query.filter_by(list_id=listid).first()
@@ -317,16 +412,18 @@ def add_item_list(itemid):
         db.session.add(nItem)
         db.session.commit()
 
-    status = [{
-        "message": "Item added to list"
-    }]
+    status = {
+        "message": "Item added to list",
+        "item": Item.query.filter_by(item_id=itemid).first().to_dict()
+    }
 
     flash("Item added to list")
     # return status
-    return redirect(url_for('product',itemid=itemid))
+    # return redirect(url_for('product',itemid=itemid))
+    return jsonify(status=status)
 
-@app.route('/users/list/<listid>/<itemid>', methods=['GET'])
-@login_required
+@app.route('/api/users/lists/<listid>/<itemid>', methods=['DELETE'])
+# @login_required
 def remove_from_list(listid,itemid):
 
     item = ListItem.query.filter_by(list_id=listid, item_id=itemid).first()
@@ -334,13 +431,15 @@ def remove_from_list(listid,itemid):
     db.session.delete(item)
     db.session.commit()
 
-    status = [{
-        "message": "Item successfully deleted"
-    }]
+    status = {
+        "message": "Item successfully removed from list",
+        "item": Item.query.filter_by(item_id=itemid).first().to_dict()
+    }
 
     flash("Item successfully deleted")
     # return status
-    return redirect(url_for('list', listid=listid, userid=current_user.acc_num))
+    # return redirect(url_for('list', listid=listid, userid=current_user.acc_num))
+    return jsonify(status=status)
 
 #Courier----------------------------------------------
 @app.route('/courier', methods=['GET'])
@@ -353,19 +452,22 @@ def courier(arg):
 #     pass
 
 #Order----------------------------------------------
-@app.route('/order/<userid>', methods=['GET'])
-def view_order(arg):
+@app.route('/api/users/<userid>/orders/', methods=['GET'])
+def orders(userid):
     pass
 
-@app.route('/user/<userid>/order', methods=['POST'])
+@app.route('/api/users/<userid>/orders/<orderid>', methods=['GET'])
+def order(orderid):
+    pass
+
+@app.route('/api/users/<userid>/orders', methods=['POST'])
 def make_order(userid):
     #IMplement simulated order cart-table > order-table
     pass
 
 #Review----------------------------------------------
 
-@app.route('/items/<itemid>/review/', methods=['GET','POST'])
-
+@app.route('/api/items/<itemid>/review/', methods=['GET','POST'])
 def review_item(itemid):
 
     if request.method == 'POST':
@@ -379,13 +481,15 @@ def review_item(itemid):
 
     db.session.commit()
 
-    status = [{
-        "message": "Review successfully added"
-    }]
+    status = {
+        "message": "Review successfully added",
+        "rating": request.form['rating']
+    }
 
     flash("Review successfully added")
     # return status
-    return redirect(url_for('products',itemid=itemid))
+    # return redirect(url_for('products',itemid=itemid))
+    return jsonify(status=status)
 
 
 #Locally required functions

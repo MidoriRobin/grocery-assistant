@@ -147,6 +147,24 @@ class Usr(db.Model):
 
         return lists
 
+    def to_dict(self):
+
+        dict = {
+            "fname": self.fname,
+            "lname": self.lname,
+            "sex": self.sex,
+            "phone": self.phone,
+            "city": self.city,
+            "street": self.street,
+            "email": self.email,
+            "hh_size": self.no_adults,
+            "no_kids": self.no_kids,
+            "martial_s": self.martial_s,
+            "diet_pref": self.diet_pref
+        }
+
+        return dict
+
     def is_authenticated(self):
         return True
 
@@ -182,6 +200,12 @@ class Courier(db.Model):
         self.spm_name = spm_name
         self.location = loc
 
+    def to_dict(self):
+
+        dict = {}
+
+        pass
+
 
 class Item(db.Model):
     __bind_key__ = 'cpstnpro'
@@ -212,6 +236,24 @@ class Item(db.Model):
         self.exp_date = exp
         self.spm_id = spm_id
 
+    def to_dict(self):
+
+        dict = {
+            "item_id": self.item_id,
+            "item_name": self.item_name,
+            "cost": str(self.cost),
+            "department": self.department,
+            "brand": self.brand,
+            "desc_item": self.desc_item,
+            "i_type": self.i_type,
+            "likes": self.likes,
+            "dislikes": self.dislikes,
+            "exp_date": self.exp_date,
+            "size": self.size
+        }
+
+        return dict
+
     def __repr__(self):
         return '<Item: %s $ %s>' %  (self.item_name,self.cost)
 
@@ -237,6 +279,18 @@ class Order(db.Model):
         self.sale_value = cost
         self.date_ordered = date_order
 
+    def to_dict(self):
+
+        dict = {
+            "acc_num": self.acc_num,
+            "cartid": self.cart_id,
+            "deliv_id": self.deliv_id,
+            "sale_value": self.sale_value,
+            "date_ordered": self.date_ordered
+        }
+
+        return dict
+
 
 class ShoppingCart(db.Model):
     __bind_key__ = 'cpstnpro'
@@ -252,6 +306,16 @@ class ShoppingCart(db.Model):
         this.acc_num = acc_num
         this.date_created = date_created
 
+    def to_dict(self):
+
+        dict = {
+            "cart_id": self.cart_id,
+            "acc_num": self.acc_num,
+            "date_created": self.date_created
+        }
+
+        return dict
+
     def fetch_all_items(self):
 
         us_items = Usi.query.filter_by(cart_id=self.cart_id).all()
@@ -259,6 +323,15 @@ class ShoppingCart(db.Model):
         items = [value.fetch_item() for value in us_items]
         print(items)
         return items
+
+    # Untested
+    def sum_items(self):
+        sum = 0
+
+        items = [Item.query.filter_by(item_id=usiItem).first() for usiItem in Usi.query.filter_by(cart_id=self.cart_id).all()]
+        sum = round(sum([item.cost for item in items]),2)
+
+        return sum
 
     def add_to_cart(self, itemid, date, quantity=1):
         pass
@@ -291,6 +364,16 @@ class Review(db.Model):
         self.acc_num = userid
         self.item_id = itemid
         self.ratings = rating
+
+    def to_dict(self):
+
+        dict = {
+            "acc_num": self.acc_num,
+            "item_id": self.item_id,
+            "rating": self.rating
+        }
+
+        return dict
 
 
 class ShoppingList(db.Model):
@@ -346,6 +429,17 @@ class ShoppingList(db.Model):
 
         return status
 
+    def to_dict(self):
+
+        dict = {
+            "list_id": self.list_id,
+            "acc_num": self.acc_num,
+            "name": self.name,
+            "date_created": self.date_created
+        }
+
+        return dict
+
     def __repr__(self):
         return '<List name %r ID: %r>' %  (self.name, self.list_id)
 
@@ -370,6 +464,17 @@ class ListItem(db.Model):
         self.date_added = date_added
         self.quantity = quantity
 
+    def to_dict(self):
+
+        dict = {
+            "list_id": self.list_id,
+            "item_id": self.item_id,
+            "quantity": self.quantity,
+            "date_added": self.date_added
+        }
+
+        return dict
+
 
 class Usi(db.Model):
     __bind_key__ = 'cpstnpro'
@@ -391,3 +496,14 @@ class Usi(db.Model):
 
     def fetch_item(self):
         return Item.query.filter_by(item_id=self.item_id).first()
+
+    def to_dict(self):
+
+        dict = {
+            "cart_id": self.cart_id,
+            "item_id": self.item_id,
+            "quantity": self.quantity,
+            "created_date": self.created_date
+        }
+
+        return dict
