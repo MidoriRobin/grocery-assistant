@@ -9,12 +9,15 @@ from app import app, db, login_manager
 from flask import render_template, request, redirect, url_for, flash, session, jsonify
 from flask_login import login_user, logout_user, current_user, login_required
 from flask_cors import cross_origin
+
 from app.forms import *
 from app.models import *
 from werkzeug.security import check_password_hash
 import random
-from app.RecomHandler import RecomHandler
 from datetime import date
+
+from app.RecomHandler import RecomHandler
+from app.Cbrec2 import cbrec2
 
 ###
 # Routing for application.
@@ -54,8 +57,15 @@ def about():
 
     # product = ShoppingCart.query.filter_by(acc_num=1323).order_by(ShoppingCart.cart_id.desc()).first()
     # product = Item.query.filter_by(item_id=1).first()
-    person = ShoppingCart.query.filter_by(acc_num=1323).first()
-    print(person.__dict__)
+    # person = ShoppingCart.query.filter_by(acc_num=1323).first()
+    # print(person.__dict__)
+
+    # Use this to posibly suggest items a user can possibly review
+    result = RecomHandler.collab_fltr(1323,24028)
+    # result2 = cbrec2()
+
+    print(result)
+    # print(RecomHandler.cont_fltr())
 
     return render_template('about.html')
 

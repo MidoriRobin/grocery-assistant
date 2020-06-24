@@ -112,8 +112,22 @@ class RecomHandler():
             return p_List[pref]
 
     @staticmethod
-    def collab_fltr(arg):
-        pass
+    def collab_fltr(userid,itemid):
+
+        filepath = './app/mlModels/Fin-Model.sav'
+        loadedModel = pickle.load(open(filepath, 'rb'))
+
+        result = loadedModel.predict(userid,itemid)
+
+        return result
+
+    @staticmethod
+    def cont_fltr():
+        filepath = './app/mlModels/CB - Model.sav'
+        loadedModel = pickle.load(open(filepath, 'rb'))
+
+        # result = loadedModel.predict(userid,itemid)
+        return loadedModel[0][0]
 
     @staticmethod
     def cont_bsd_fltr(itemid, num=5):
