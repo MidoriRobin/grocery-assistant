@@ -1,6 +1,7 @@
 <template>
     <ul class="top-first">
-      <h1>LOGO</h1>
+      <a class="heading" @click="goHome"><h1>LOGO</h1></a>
+
       <!-- <li><a href="#"></a></li> -->
       <li><a href="#">Login</a></li>
       <li><a href="#">Signup</a></li>
@@ -15,7 +16,15 @@ export default {
   data() {
     return {};
   },
+
+  methods: {
+    goHome: function(){
+      console.log("Going home");
+      this.$router.push('/');
+    },
+  },
 };
+
 /* eslint-enable */
 </script>
 
@@ -47,7 +56,7 @@ ul.top-first > li{
    background-color: #111;
  }
 
-ul.top-first > h1{
+ul.top-first a.heading > h1{
   font-size: 20px;
   display: inline;
   float: left;
@@ -57,4 +66,5 @@ ul.top-first > h1{
   display:grid;
   float: left;
 } */
+
 </style>
