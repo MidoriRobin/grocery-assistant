@@ -67,6 +67,7 @@ export default {
 
 /* eslint-enable */
 </script>
+
 <style>
 div.items-page {
   display: grid;
