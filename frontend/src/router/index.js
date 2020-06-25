@@ -4,6 +4,7 @@ import Home from '../views/Home.vue';
 import Ping from '../components/Ping.vue';
 import Login from '../components/Login.vue';
 import Test from '../components/Test.vue';
+import Landing from '../components/Landing.vue';
 
 Vue.use(VueRouter);
 
@@ -35,6 +36,11 @@ const routes = [
     path: '/test',
     name: 'Test',
     component: Test,
+  },
+  {
+    path: '/landing',
+    name: 'Landing',
+    component: Landing,
   },
 ];
 
