@@ -326,12 +326,13 @@ class ShoppingCart(db.Model):
 
     # Untested
     def sum_items(self):
-        sum = 0
+        sumItems = 0
 
-        items = [Item.query.filter_by(item_id=usiItem).first() for usiItem in Usi.query.filter_by(cart_id=self.cart_id).all()]
-        sum = round(sum([item.cost for item in items]),2)
+        items = [Item.query.filter_by(item_id=usiItem.item_id).first() for usiItem in Usi.query.filter_by(cart_id=self.cart_id).all()]
+        print(items)
+        sumItems = round(sum([item.cost for item in items]),2)
 
-        return sum
+        return sumItems
 
     def add_to_cart(self, itemid, date, quantity=1):
         pass

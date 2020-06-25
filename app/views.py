@@ -9,12 +9,15 @@ from app import app, db, login_manager
 from flask import render_template, request, redirect, url_for, flash, session, jsonify
 from flask_login import login_user, logout_user, current_user, login_required
 from flask_cors import cross_origin
+
 from app.forms import *
 from app.models import *
 from werkzeug.security import check_password_hash
 import random
-from app.RecomHandler import RecomHandler
 from datetime import date
+
+from app.RecomHandler import RecomHandler
+from app.Cbrec2 import cbrec2
 
 ###
 # Routing for application.
@@ -54,8 +57,17 @@ def about():
 
     # product = ShoppingCart.query.filter_by(acc_num=1323).order_by(ShoppingCart.cart_id.desc()).first()
     # product = Item.query.filter_by(item_id=1).first()
-    person = ShoppingCart.query.filter_by(acc_num=1323).first()
-    print(person.__dict__)
+    # person = ShoppingCart.query.filter_by(acc_num=1323).first()
+    # print(person.__dict__)
+
+    # Use this to posibly suggest items a user can possibly review
+    result = RecomHandler.collab_fltr(1323,24028)
+    # result2 = cbrec2()
+
+    print(result)
+    cart = ShoppingCart.query.filter_by(acc_num=1323).first()
+    print(cart.sum_items())
+    # print(RecomHandler.cont_fltr())
 
     return render_template('about.html')
 
@@ -82,7 +94,8 @@ def login():
             session['cartid'] = user.get_cartid()
             status = {
                 "message": "User successfully logged in",
-                "user": user
+                "userid": user.acc_num,
+                "cartid": user.get_cartid()
             }
 
         elif int(username) >= 1333:
@@ -93,7 +106,8 @@ def login():
                 session['cartid'] = user.get_cartid()
                 status = {
                     "message": "User successfully logged in",
-                    "user": user
+                    "userid": user.acc_num,
+                    "cartid": user.get_cartid()
                 }
             else:
                 status = {
@@ -173,7 +187,7 @@ def load_user(id):
     return Usr.query.get(id)
 
 
-@app.route('/api/products')
+@app.route('/api/products', methods=['GET'])
 def products():
     thing = 10
 
@@ -229,7 +243,7 @@ def product(itemid):
 
     # return render_template('/test-templates/product.html', item=item, revform=revform, listform=listform)
 
-    return jsonify(status=status)
+    return jsonify(status=status), 201
 
 #The route can be changed to "TryThese" instead of "Recommended items"
 @app.route('/api/TryThese/<userid>', methods=['GET'])
@@ -289,7 +303,7 @@ def cart(userid):
     status = {
         "message": "cart successfully fetched",
         "cart": [item.to_dict() for item in itemList],
-        "total_cost": cart.sum_items()
+        "total_cost": str(cart.sum_items())
     }
 
     flash("cart successfully fetched")
@@ -297,9 +311,9 @@ def cart(userid):
 
     return jsonify(status=status)
 
-@app.route('/api/items/<itemid>/<qty>/cart/', methods=['POST'])
+@app.route('/api/items/<itemid>/<qty>/cart/<cartid>', methods=['POST'])
 # @login_required
-def add_item_cart(itemid,qty,cartid):
+def add_item_cart(itemid,qty, cartid):
     """Route to add item to a cart"""
 
     item = Usi(cartid, itemid, qty, date.today())
@@ -318,13 +332,12 @@ def add_item_cart(itemid,qty,cartid):
     flash("item successfully added to cart")
     # return redirect(url_for('products'))
 
-    return jsonify(status=status)
+    return jsonify(status=status), 201
 
-@app.route('/api/users/<userid>/cart/<itemid>', methods=['DELETE'])
+@app.route('/api/users/<userid>/cart/<cartid>/<itemid>', methods=['DELETE'])
 # @login_required
-def remove_from_cart(userid,itemid):
-
-    item = Usi.query.filter_by(cart_id=session['cartid'],item_id=itemid).first()
+def remove_from_cart(userid,itemid,cartid):
+    item = Usi.query.filter_by(cart_id=cartid,item_id=itemid).first()
 
     db.session.delete(item)
     db.session.commit()
@@ -337,7 +350,7 @@ def remove_from_cart(userid,itemid):
     flash("Item deleted successfully")
     # return status
     # return redirect(url_for('cart', userid=current_user.acc_num))
-    return jsonify(status=status)
+    return jsonify(status=status), 201
 
 #Lists----------------------------------------------
 @app.route('/api/users/<userid>/lists', methods=['POST'])
@@ -467,7 +480,7 @@ def make_order(userid):
 
 #Review----------------------------------------------
 
-@app.route('/api/items/<itemid>/review/', methods=['GET','POST'])
+@app.route('/api/items/<itemid>/review/', methods=['POST'])
 def review_item(itemid):
 
     if request.method == 'POST':

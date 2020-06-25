@@ -4,7 +4,9 @@ import Home from '../views/Home.vue';
 import Ping from '../components/Ping.vue';
 import Login from '../components/Login.vue';
 import Test from '../components/Test.vue';
-import Landing from '../components/Landing.vue';
+import SingleItem from '../components/SingleItem.vue';
+import ShoppingCart from '../components/ShoppingCart.vue';
+import Payment from '../components/Payment.vue';
 
 Vue.use(VueRouter);
 
@@ -38,9 +40,19 @@ const routes = [
     component: Test,
   },
   {
-    path: '/landing',
-    name: 'Landing',
-    component: Landing,
+    path: '/items/:itemid',
+    name: 'SingleItem',
+    component: SingleItem,
+  },
+  {
+    path: '/users/:userid/cart',
+    name: 'ShoppingCart',
+    component: ShoppingCart,
+  },
+  {
+    path: '/payment',
+    name: 'Payment',
+    component: Payment,
   },
 ];
 

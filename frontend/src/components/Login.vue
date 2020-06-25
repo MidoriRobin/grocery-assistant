@@ -47,7 +47,10 @@ export default {
         })
         .then((jsonResponse) => {
             this.message = jsonResponse.status.message;
+            sessionStorage.setItem('usid', jsonResponse.status.userid);
+            sessionStorage.setItem('crtid', jsonResponse.status.cartid);
             console.log(jsonResponse);
+            this.$router.push('/users/' + jsonResponse.status.userid + '/cart');
         })
         .catch((error) => {
           console.log(error);
