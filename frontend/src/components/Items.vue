@@ -1,6 +1,10 @@
 <!-- displays all the items in an aisle -->
 <template>
   <div class="items-page">
+    <Navigation/>
+    <div>
+      <h3> Products </h3>
+    </div>
     <ul class="item-list">
       <li v-for="item in items" :key="item.id">
         <img class="plpic" src="../assets/None.jpg" alt="">
@@ -17,6 +21,8 @@
 <!-- change to comply with your preferred JS standard -->
 <script>
 /* eslint-disable */
+import Navigation from '@/components/Navigation.vue'
+
 export default {
   name: "Items",
   data: () => ({
@@ -72,14 +78,15 @@ export default {
 div.items-page {
   display: grid;
   grid-template-rows: 50% 50%;
+  grid-row-gap: 20px;
   border: 2px solid black;
-  height: 1000px;
+  /* height: 1000px; */
   width: 80%;
   margin: 0 auto;
 }
 
 ul.item-list{
-  margin-top: 50px;
+  margin-top: 20px;
   list-style: none;
 }
 
@@ -91,8 +98,10 @@ ul.item-list li{
   border-radius: 10px;
   box-shadow: 1px 3px 4px gray;
   padding: 10px;
-  margin: 20px;
+  margin: 20px auto auto auto;
   height: 200px;
+  width: 700px;
+
 }
 
 .item-list div{

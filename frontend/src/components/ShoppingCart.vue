@@ -41,6 +41,8 @@
 <!-- change to comply with your preferred JS standard -->
 <script>
 /* eslint-disable */
+// import Navigation from '@/components/Navigation.vue'
+
 export default {
   name: 'ShoppingCart',
   data: () => ({

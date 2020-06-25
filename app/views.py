@@ -143,7 +143,7 @@ def logout():
 def signup():
     form = UsrForm()
     #Collect data from form and save in database
-    if request.method == 'POST' and form.validate_on_submit():
+    if request.method == 'POST':
         fname= form.firstname.data
         lname= form.lastname.data
         sex = form.sex.data
@@ -167,7 +167,7 @@ def signup():
         flash('success','')
 
         status = {
-            "message": "user successfully logged in"
+            "message": "user successfully signed up"
         }
 
     else:
