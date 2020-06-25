@@ -162,7 +162,7 @@ export default {
 
     returnToItems: function() {
         console.log("returning to items..");
-        this.$router.push('/item');
+        this.$router.push('/items');
     },
 
     incr: function() {

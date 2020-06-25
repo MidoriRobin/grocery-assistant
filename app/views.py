@@ -215,7 +215,7 @@ def products():
         "products": [product.to_dict() for product in prodos.items],
     }
 
-    return jsonify(status=status)
+    return jsonify(status=status), 201
 
 
 @app.route('/api/products/<itemid>', methods=['GET'])

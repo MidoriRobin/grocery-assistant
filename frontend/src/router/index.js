@@ -7,6 +7,7 @@ import Test from '../components/Test.vue';
 import SingleItem from '../components/SingleItem.vue';
 import ShoppingCart from '../components/ShoppingCart.vue';
 import Payment from '../components/Payment.vue';
+import Items from '../components/Items.vue';
 
 Vue.use(VueRouter);
 
@@ -53,6 +54,11 @@ const routes = [
     path: '/payment',
     name: 'Payment',
     component: Payment,
+  },
+  {
+    path: '/items',
+    name: 'Items',
+    component: Items,
   },
 ];
 
