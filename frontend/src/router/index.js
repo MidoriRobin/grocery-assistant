@@ -8,6 +8,7 @@ import SingleItem from '../components/SingleItem.vue';
 import ShoppingCart from '../components/ShoppingCart.vue';
 import Payment from '../components/Payment.vue';
 import Items from '../components/Items.vue';
+import Landing from '../components/Landing.vue';
 
 Vue.use(VueRouter);
 
@@ -59,6 +60,11 @@ const routes = [
     path: '/items',
     name: 'Items',
     component: Items,
+  },
+  {
+    path: '/landing',
+    name: 'Landing',
+    component: Landing,
   },
 ];
 

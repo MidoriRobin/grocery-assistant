@@ -8,7 +8,7 @@
       sed pharetra nisi consequat. Etiam suscipit orci eu nulla ultricies semper.
        Donec dignissim enim id velit egestas, sed aliquet lorem luctus.</p>
        <!-- <About/> -->
-    <button type="button" name="shop-now">Shop Now</button>
+    <button @click="goShopping" type="button" name="shop-now">Shop Now</button>
   </div>
 </div>
 </template>
@@ -24,6 +24,12 @@ export default {
     About,
     Navigation
   },
+methods:{
+  goShopping: function(){
+    console.log('Heading back to the shopping page...');
+    this.$router.push('/items')
+  }
+}
 };
 
 /* eslint-enable */
