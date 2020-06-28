@@ -1,6 +1,7 @@
 <!-- this page displays the details of an items, is a result of clicking 'Click for more!'  -->
 <template>
   <div class="item-page">
+    <Flash :message="message"/>
     <!-- <h1>This is the Single Item Page</h1> -->
     <div class="about-item">
       <div class="item-img">
@@ -26,7 +27,7 @@
             </li>
           </ul>
         </div>
-        <button>Leave a Review</button>
+        <button @click="scrllToReview">Leave a Review</button>
         <div class="item-desc">
           <h5>Description</h5>
           <p>
@@ -34,7 +35,7 @@
           </p>
         </div>
         <div class="cart-ctrl">
-            <input type="number" id="qty" name="quantity" value="0" v-model="qty"/>
+            <input type="number" id="qty" name="quantity" value="0" v-model="qty" readonly/>
             <p>{{ qty }}</p>
             <button type="button" @click="incr"> + </button>
             <button type="button" @click="decr"> - </button> <br>
@@ -72,8 +73,14 @@
 <!-- change to comply with your preferred JS standard -->
 <script>
 /* eslint-disable */
+
+import Flash from '@/components/Flash.vue'
+
 export default {
   name: "SingleItem",
+  components: {
+    Flash
+  },
   data: () => ({
     message: '',
     error: '',
@@ -116,12 +123,19 @@ export default {
         .then(function (response){
             return response.json();
         })
-        .then(function (jsonResponse) {
+        .then((jsonResponse) => {
+            this.message = jsonResponse.status.message;
             console.log(jsonResponse);
         })
         .catch(function (error) {
             console.log(error);
         });
+    },
+
+    scrllToReview: function() {
+      let elmnt = document.getElementById('reviewForm');
+
+      elmnt.scrollIntoView(true);
     },
 
     addToCart: function() {
@@ -142,6 +156,7 @@ export default {
               console.log(jsonResponse);
 
               if(resp === 201) {
+                this.message = jsonResponse.status.message;
                 console.log("OK, item added");
                 this.qty = 0;
               } else {
@@ -173,12 +188,14 @@ export default {
     },
 
     decr: function() {
-        console.log("incrementing quantity");
+        console.log("decrementing quantity");
         if (this.qty < 1) {
           console.log("quantity less than 1!");
         } else {
           this.qty = this.qty - 1;
         }
+
+        console.log(this.qty);
     }
   },
   created: function () {
@@ -200,6 +217,7 @@ div.item-page {
   height: 1000px;
   width: 80%;
   margin: 0 auto;
+  margin-top: 50px;
 }
 
 div.about-item {

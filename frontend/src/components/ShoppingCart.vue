@@ -19,12 +19,12 @@
         </thead>
         <tbody class="body-area">
           <tr v-for="item in cart" :key="item.id">
-            <td>2</td>
+            <td>{{item.quantity}}</td>
             <td>
               <!-- <img src="../assets/None.jpg"/> -->
-              <p>{{item.item_name}}</p>
+              <p>{{item.Item.item_name}}</p>
             </td>
-            <td>{{item.cost}}</td>
+            <td>${{item.Item.cost}}</td>
             <td>
               <p>$150.00</p>
               <button class="rem-bttn" @click="removeItem(item.item_id)">Remove from cart</button>
@@ -103,6 +103,10 @@ export default {
         console.log("Checking out cart..")
 
         fetch('')
+    },
+
+    calculateTtl: function(quant,price) {
+      console.log("calculaating..")
     }
   },
   created: function () {

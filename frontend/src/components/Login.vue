@@ -1,8 +1,8 @@
 <template>
-  <div class="login-form text-center">
+  <div class="login-form">
+    <Flash :message="message"/>
+    <Flash :error="error"/>
     <h2>Please Log in</h2>
-    <h4 v-if="error"> Error: {{ error }} </h4>
-    <h5 v-if="message"> Message: {{ message }} </h5>
     <form class="form-login" @submit.prevent="LoginUser" id="loginForm" method="post">
       <div class="form-group">
         <label for="username" class="sr-only">Username</label>
@@ -21,8 +21,14 @@
 
 <script>
 /*eslint-disable*/
+
+import Flash from '@/components/Flash.vue';
+
 export default {
   name: 'Login',
+  components: {
+    Flash
+  },
   data() {
     return {
       error: '',
@@ -47,10 +53,16 @@ export default {
         })
         .then((jsonResponse) => {
             this.message = jsonResponse.status.message;
-            sessionStorage.setItem('usid', jsonResponse.status.userid);
-            sessionStorage.setItem('crtid', jsonResponse.status.cartid);
-            console.log(jsonResponse);
-            this.$router.push('/users/' + jsonResponse.status.userid + '/cart');
+
+            if (jsonResponse.status.userid){
+              sessionStorage.setItem('usid', jsonResponse.status.userid);
+              sessionStorage.setItem('crtid', jsonResponse.status.cartid);
+              this.$router.push('/items');
+              console.log(jsonResponse);
+            } else {
+                console.log(jsonResponse);
+            }
+            // this.$router.push('/users/' + jsonResponse.status.userid + '/cart');
         })
         .catch((error) => {
           console.log(error);
@@ -59,4 +71,20 @@ export default {
     },
   },
 };
+/* eslint-enable */
 </script>
+<style>
+
+div.login-form{
+  height: 20%;
+  width: 500px;
+  margin: 200px auto;
+  padding: 50px;
+  border: 2px solid #009F6B;
+  border-radius: 5px;
+}
+
+button{
+  margin-top: 10px;
+}
+</style>

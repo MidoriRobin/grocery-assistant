@@ -1,63 +1,65 @@
 <template>
   <div class="signup-page">
+    <Flash :message="message"/>
+    <Flash :error="error"/>
     <h3> Sign-Up </h3>
     <form class="form-sign" @submit.prevent="SignupUser" id="signForm" method="post">
       <div>
-        <label>First Name: </label>
+        <label for="firstname">First Name: </label>
         <input type="text" name="firstname">
       </div>
       <div>
-        <label>Last Name: </label>
+        <label for="lastname">Last Name: </label>
         <input type="text" name="lastname">
       </div>
       <div>
-        <label>Gender: </label>
+        <label for="gender">Gender: </label>
         <select name="gender">
           <option value="male">Male</option>
           <option value="female">Female</option>
         </select>
       </div>
       <div>
-        <label>Email: </label>
+        <label for="email">Email: </label>
         <input type="email" name="email" required>
       </div>
       <div>
-        <label>Phone: </label>
+        <label for="phone">Phone: </label>
         <input type="text" name="phone" required>
       </div>
       <div>
-        <label>City: </label>
+        <label for="city">City: </label>
         <input type="text" name="city" required>
       </div>
       <div>
-        <label>Street: </label>
+        <label for="street">Street: </label>
         <input type="text" name="street" required>
       </div>
       <div>
-        <label>House Hold Size: </label>
+        <label for="hhsize">House Hold Size: </label>
         <input type="number" name="hhsize" required>
       </div>
       <div>
-        <label>Adults in House: </label>
+        <label for="adlts">Adults in House: </label>
         <input type="number" name="adlts" required>
       </div>
       <div>
-        <label>Children in House: </label>
+        <label for="kids">Children in House: </label>
         <input type="number" name="kids" required>
       </div>
       <div>
-        <label>Marital Status: </label>
+        <label for="maritalstat">Marital Status: </label>
         <select name="maritalstat">
           <option value="single">Single</option>
           <option value="married">Married</option>
         </select>
       </div>
       <div>
-        <label>Diet Preference: </label>
+        <label for="dietpref">Diet Preference: </label>
         <input type="text" name="dietpref" required>
       </div>
       <div>
-        <label>Password: </label>
+        <label for="password">Password: </label>
         <input type="password" name="password" required>
       </div>
       <div class="submit-btn">
@@ -69,8 +71,13 @@
 
 <script>
 /*eslint-disable*/
+
+import Flash from '@/components/Flash.vue';
 export default {
   name: 'Signup',
+  components: {
+    Flash
+  },
   data() {
     return {
       error: '',
@@ -95,6 +102,7 @@ export default {
         })
         .then((jsonResponse) => {
             console.log(jsonResponse);
+            this.message = jsonResponse.status.message
             this.$router.push('/');
         })
         .catch((error) => {
@@ -114,6 +122,7 @@ form > div {
 }
 
 .signup-page {
+  background-image: url("background2.jpg");
   width: 50%;
   background-color: white;
   margin-left: auto;

@@ -90,13 +90,18 @@ def login():
         if int(username) in range(1234,1333):
             print("this is a test user..")
             user = Usr.query.filter_by(acc_num=username).first()
-            login_user(user)
-            session['cartid'] = user.get_cartid()
-            status = {
-                "message": "User successfully logged in",
-                "userid": user.acc_num,
-                "cartid": user.get_cartid()
-            }
+            if user is not None:
+                login_user(user)
+                session['cartid'] = user.get_cartid()
+                status = {
+                    "message": "User successfully logged in",
+                    "userid": user.acc_num,
+                    "cartid": user.get_cartid()
+                }
+            else:
+                status = {
+                    "message": "Invalid password or no such user exists"
+                }
 
         elif int(username) >= 1333:
             print("not a test user..")
@@ -144,19 +149,19 @@ def signup():
     form = UsrForm()
     #Collect data from form and save in database
     if request.method == 'POST':
-        fname= form.firstname.data
-        lname= form.lastname.data
-        sex = form.sex.data
-        email= form.email.data
-        phone = form.phonenumber.data
-        city = form.city.data
-        street = form.street.data
-        hh_size = form.hhsize.data
-        no_adults = form.adlts.data
-        no_kids = form.kids.data
-        marital_s = form.maritalstat.data
-        diet_pref = form.dietpref.data
-        password = form.password.data
+        fname= request.form['firstname']
+        lname= request.form['lastname']
+        sex = request.form['gender']
+        email= request.form['email']
+        phone = request.form['phone']
+        city = request.form['city']
+        street = request.form['street']
+        hh_size = request.form['hhsize']
+        no_adults = request.form['adlts']
+        no_kids = request.form['kids']
+        marital_s = request.form['maritalstat']
+        diet_pref = request.form['dietpref']
+        password = request.form['password']
 
 
         user = Usr(fname,lname,sex,email,phone,city,street,hh_size,
@@ -212,6 +217,7 @@ def products():
         "current_page": page,
         "prev_page": prodos.prev_num,
         "next_page": prodos.next_num,
+        "total_pages": prodos.pages,
         "products": [product.to_dict() for product in prodos.items],
     }
 
@@ -302,7 +308,7 @@ def cart(userid):
 
     status = {
         "message": "cart successfully fetched",
-        "cart": [item.to_dict() for item in itemList],
+        "cart": itemList,
         "total_cost": str(cart.sum_items())
     }
 

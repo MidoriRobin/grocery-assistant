@@ -318,10 +318,10 @@ class ShoppingCart(db.Model):
 
     def fetch_all_items(self):
 
-        us_items = Usi.query.filter_by(cart_id=self.cart_id).all()
-        print(us_items)
-        items = [value.fetch_item() for value in us_items]
-        print(items)
+        cart_items = Usi.query.filter_by(cart_id=self.cart_id).all()
+        print(cart_items)
+        items = [cart_item.to_dict() for cart_item in cart_items]            
+
         return items
 
     # Untested
@@ -504,7 +504,8 @@ class Usi(db.Model):
             "cart_id": self.cart_id,
             "item_id": self.item_id,
             "quantity": self.quantity,
-            "created_date": self.created_date
+            "created_date": self.created_date,
+            "Item": self.fetch_item().to_dict()
         }
 
         return dict
