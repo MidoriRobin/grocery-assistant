@@ -1,6 +1,6 @@
 <template>
 <div class="landing">
-  <!-- <Navigation/> -->
+  <Navigation/>
   <div class="cta">
     <h1>Welcome to Quikshop!</h1>
     <p>Sed laoreet urna dolor, ut feugiat ipsum tempor ac.
@@ -28,13 +28,7 @@ methods:{
   goShopping: function(){
     console.log('Heading back to the shopping page...');
     this.$router.push('/items')
-  },
-  signUp: function() {
-    this.$router.push('/signup');
-  },
-  login: function() {
-    this.$router.push('/signup');
-  },
+  }
 }
 };
 
@@ -50,16 +44,12 @@ html,body{
 }
 
 .landing{
-  height: 900px;
-  width: 1000px;
   background-image: url("background2.jpg");
-  background-size: cover;
-  margin: 0 auto;
-  /* position: fixed; */
-  /* top: 0;
+  position: fixed;
+  top: 0;
   left: 0;
   bottom: 0;
-  right: 0; */
+  right: 0;
   overflow: auto;
 }
 
