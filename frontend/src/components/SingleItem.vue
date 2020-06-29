@@ -218,6 +218,7 @@ div.item-page {
   width: 80%;
   margin: 0 auto;
   margin-top: 50px;
+  background: white;
 }
 
 div.about-item {
@@ -252,6 +253,10 @@ div.item-info > ul {
   list-style: None;
 }
 
+/* .item-info h4{
+  font-weight: bold;
+} */
+
 div.about > button {
   padding: 0;
   border-radius: 5px;
@@ -264,7 +269,8 @@ div.about > button {
 div.item-desc {
   grid-row: 2 / 3;
   grid-column: 1 / 3;
-
+  border: 2px solid black;
+  margin-bottom: 10px;
 }
 
 div.cart-ctrl {

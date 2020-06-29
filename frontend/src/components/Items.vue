@@ -5,10 +5,10 @@
       <h3> Products </h3>
       <div class="recom-area">
         <p> To make this a special experience for you we've prepared some recommendations</p>
-        <button> See Recommendations </button>
+        <button class="recom-btn"> See Recommendations </button>
       </div>
     </div>
-    <div class="menu">
+    <!-- <div class="menu">
       <h4> Menu </h4>
       <ul class="aisles">
         <li>
@@ -35,7 +35,7 @@
           <button>go to Aisle</button>
         </li>
       </ul>
-    </div>
+    </div> -->
     <ul class="item-list">
       <li v-for="item in items" :key="item.id">
         <router-link :to="{ name: 'SingleItem', params: { itemid: item.item_id }}">
@@ -49,7 +49,7 @@
           <input type="number" name="quantity" value="0" size="4" readonly/>
           <button type="button" class="add"> + </button>
           <button type="button" class="sub"> - </button>
-          <button type="button" @click="goToItem(item.item_id)" name="profile">Add to cart</button>
+          <button type="button" @click="goToItem(item.item_id)" class="toCart">Add to cart</button>
         </div>
       </li>
     </ul>
@@ -144,15 +144,21 @@ export default {
 </script>
 
 <style>
+body{
+  background-image: url('background2.jpg');
+}
 div.items-page {
   display: grid;
-  grid-template-rows: 40% 60%;
-  grid-template-columns:20% 80%;
+  grid-template-rows: 20% 80%;
+  /* grid-template-columns:10% 90%; */
   grid-row-gap: 20px;
-  border: 2px solid black;
+  /* border: 2px solid black; */
   /* height: 1000px; */
   width: 80%;
-  margin: 50px auto;
+  margin-right: auto;
+  margin-left: auto;
+  margin-top: 0;
+  background-color: white;
 }
 
 div.status-area {
@@ -161,17 +167,33 @@ div.status-area {
   height: inherit;
   width: inherit;
   margin: 0 auto;
+  width:100%;
 }
 
 div.recom-area {
+  width: 100%;
+  height: 100px;
+  font-size: 15px;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  box-shadow: 2px 3px #888888;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  background-color: #90ee90;
 }
 
 div.recom-area > p {
   margin-right: 10px;
+}
+
+div.recom-area > button {
+  /* height: 30px;
+  width: 20px; */
+  /* display: inline-flex; */
+  color: black;
+  background-color: white;
 }
 
 div.menu {
@@ -180,15 +202,14 @@ div.menu {
   border: 2px solid black;
 
 }
-
+/*
 h4 {
   height: 30px;
   width: 70%;
   padding: 5px;
   border-bottom: 3px solid grey;
   margin: 10px auto;
-}
-
+} */
 div.menu > ul {
   padding: 0;
 }
@@ -211,16 +232,18 @@ ul.item-list{
 }
 
 ul.item-list li{
+    background-color: white;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     border-top-style: solid;
-    border-top-color: blue;
-    border-radius: 10px;
+    border-top-color: black;
+    border-radius: 5px;
     box-shadow: 1px 3px 4px gray;
     height: 400px;
     width: 300px;
+    margin-left: 0;
 }
 
 .item-list div{
@@ -232,13 +255,19 @@ ul.item-list li{
 .item-list img.plpic{
   width: 200px;
   height: 180px;
+  /* margin-bottom: 0; */
+  border-bottom: 2px solid black;
 }
 
-.item-list button{
+/* .item-list button{
   grid-column: 3;
   margin-top: auto;
   margin-bottom: auto;
   height: 50px;
+} */
+
+.item-list h5{
+  margin-top: 0;
 }
 
 button{
@@ -259,4 +288,53 @@ button:hover{
 button.add,button.sub {
   height: 30px;
 }
+
+div.cart-area{
+  border-top: 1px solid black;
+  top: 0;
+}
+
+div.cart-area > input{
+  width: 60%;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  border-radius: 3px;
+}
+
+
+/* div.cart-area > button{
+  background-color: white;
+} */
+
+.add,.sub{
+  margin-right:2px;
+  background-color: white;
+}
+
+.add{
+  border: 1px solid green;
+}
+
+.add:hover{
+  background-color: green;
+}
+
+.sub{
+  border:1px solid red;
+}
+
+.toCart{
+  margin-top: 5px;
+  width: 100%;
+  border: 1px solid black;
+  border-radius: 4px;
+  background-color: #90ee90;
+  font-weight: bold;
+}
+
+button.toCart:hover{
+  background-color: white;
+  color: green;
+}
+
 </style>
