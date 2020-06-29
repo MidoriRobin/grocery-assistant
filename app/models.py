@@ -138,7 +138,7 @@ class Usr(db.Model):
 
     def get_cartid(self):
 
-        cart = ShoppingCart.query.filter_by(acc_num=self.acc_num).first()
+        cart = ShoppingCart.query.filter_by(acc_num=self.acc_num).order_by(ShoppingCart.cart_id.desc()).first()
 
         return cart.cart_id
 
@@ -320,7 +320,7 @@ class ShoppingCart(db.Model):
 
         cart_items = Usi.query.filter_by(cart_id=self.cart_id).all()
         print(cart_items)
-        items = [cart_item.to_dict() for cart_item in cart_items]            
+        items = [cart_item.to_dict() for cart_item in cart_items]
 
         return items
 
@@ -410,12 +410,10 @@ class ShoppingList(db.Model):
 
         items = ListItem.query.filter_by(list_id=self.list_id).all()
 
-        status = [{
-            "message": "Items obtained",
-            "Items": items
-        }]
+        list_items = [item.to_dict() for item in items]
 
-        return items
+
+        return list_items
 
     def remove_item(self, itemid):
 
@@ -471,10 +469,15 @@ class ListItem(db.Model):
             "list_id": self.list_id,
             "item_id": self.item_id,
             "quantity": self.quantity,
-            "date_added": self.date_added
+            "date_added": self.date_added,
+            "Item": self.fetch_item().to_dict()
         }
 
         return dict
+
+    def fetch_item(self):
+        return Item.query.filter_by(item_id=self.item_id).first()
+
 
 
 class Usi(db.Model):

@@ -7,10 +7,63 @@
       <li><router-link to="/login">Login</router-link></li>
       <li><router-link to="/signup">Signup</router-link></li>
       <li><router-link to="/landing">Landing</router-link></li>
+      <li><router-link to="/lists">Shopping List</router-link></li>
+      <li v-if="show"><button id="navi" @click="logout">Logout</button></li>
     </ul>
     <router-view/>
   </div>
 </template>
+
+<script>
+/* eslint-disable */
+
+export default {
+  name: "",
+  data: () => ({
+    message: '',
+    error: '',
+    show: true,
+  }),
+
+  watch: {
+    ifLogged: function() {
+      if(!sessionStorage.getItem('usid')) {
+        show = false;
+      } else {
+        show = true;
+      }
+    }
+  },
+
+  methods: {
+    logout: function() {
+      console.log("logging out user..")
+      sessionStorage.clear()
+
+      fetch('http://localhost:5000/api/logout', {
+          method: 'GET',
+          headers: {},
+      })
+      .then(function (response){
+          // resp = response.status;
+          console.log(response);
+          return response.json();
+      })
+      .then((jsonResponse) => {
+          this.message = jsonResponse.status.message;
+          this.$router.push('/');
+          console.log(jsonResponse);
+      })
+      .catch(function (error) {
+          console.log(error);
+      });
+
+    },
+  }
+}
+
+/* eslint-enable */
+</script>
 
 <style scoped>
 #app {
@@ -63,6 +116,26 @@ ul.top-first > h1{
   float: left;
   padding-left: 10px;
 }
+
+button#navi {
+  background: none;
+  color: black;
+  border-radius: 0;
+  border: none;
+  margin: 0;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  padding-left: 15px;
+  padding-right: 15px;
+  font: inherit;
+  outline: inherit;
+}
+
+button#navi:hover {
+  color: white;
+  background-color: #111;
+}
+
 /* ul.top-second > li{
   display:grid;
   float: left;

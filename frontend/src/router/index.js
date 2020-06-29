@@ -10,6 +10,10 @@ import Payment from '../components/Payment.vue';
 import Items from '../components/Items.vue';
 import Landing from '../components/Landing.vue';
 import Signup from '../components/Signup.vue';
+import Recommendation from '../components/Recommendation.vue';
+import Lists from '../components/Lists.vue';
+import List from '../components/List.vue';
+
 
 Vue.use(VueRouter);
 
@@ -66,6 +70,21 @@ const routes = [
     path: '/signup',
     name: 'Signup',
     component: Signup,
+  },
+  {
+    path: '/trythese',
+    name: 'Recomm',
+    component: Recommendation,
+  },
+  {
+    path: '/lists',
+    name: 'Lists',
+    component: Lists,
+  },
+  {
+    path: '/lists/:listid',
+    name: 'List',
+    component: List,
   },
 ];
 

@@ -92,6 +92,7 @@ def login():
             user = Usr.query.filter_by(acc_num=username).first()
             if user is not None:
                 login_user(user)
+                print("User logged in")
                 session['cartid'] = user.get_cartid()
                 status = {
                     "message": "User successfully logged in",
@@ -128,8 +129,8 @@ def login():
 
     return jsonify(status=status)
 
-@app.route('/logout')
-@login_required
+@app.route('/api/logout', methods=['GET'])
+# @login_required
 def logout():
     session.pop('logged_in', None)
     session.pop('cartid', None)
@@ -141,7 +142,7 @@ def logout():
     }
 
     # return redirect(url_for('home'))
-    return jsonify(status)
+    return jsonify(status=status)
 
 #User sign up route
 @app.route('/api/signup', methods=['GET','POST'])
@@ -293,7 +294,7 @@ def recomm(userid):
     }
 
     # return render_template('recommendation.html', recom=randPred)
-    return jsonify(status=status)
+    return jsonify(status=status), 201
 
 #Cart----------------------------------------------
 @app.route('/api/users/<userid>/cart', methods=['GET'])
@@ -395,7 +396,7 @@ def view_lists(userid):
     flash("Displaying all shopping lists based on user id")
     #return status
     # return render_template('/test-templates/lists.html', LoL=lists)
-    return jsonify(status=status)
+    return jsonify(status=status), 201
 
 @app.route('/api/users/<userid>/lists/<listid>', methods=['GET'])
 # @login_required
@@ -406,7 +407,7 @@ def list(userid,listid):
     items = list.view_items()
     status = {
         "message": "Displaying all items in the shopping list chosen",
-        "items": [item.to_dict() for item in items]
+        "items": items
     }
 
     flash("Displaying all items in the shopping list chosen")
@@ -466,23 +467,53 @@ def courier(arg):
     """Shows a list of couriers"""
     pass
 
-# @app.route('')
-# def chs_courier(arg):
-#     pass
 
 #Order----------------------------------------------
 @app.route('/api/users/<userid>/orders/', methods=['GET'])
 def orders(userid):
-    pass
+
+    orders = Order.query.filter_by(acc_num=userid).all()
+
+    status = {
+        "message": "Orders successfully fetched",
+        "orders": [order.to_dict() for order in orders]
+    }
+
+
+    return jsonify(status=status), 201
 
 @app.route('/api/users/<userid>/orders/<orderid>', methods=['GET'])
 def order(orderid):
-    pass
 
-@app.route('/api/users/<userid>/orders', methods=['POST'])
-def make_order(userid):
+    order = Order.query.filter_by(order_id=orderid).first()
+
+    cart = ShoppingCart.query.filter_by(cart_id=order.cart_id).first()
+    status = {
+        "message": "Order obtained",
+        "order": order.to_dict(),
+        "cart": cart.to_dict(),
+        "items": cart.fetch_all_items()
+    }
+
+    return jsonify(status=status), 201
+
+@app.route('/api/users/<userid>/cart/<cartid>/orders', methods=['POST'])
+def make_order(userid,cartid):
     #IMplement simulated order cart-table > order-table
-    pass
+    cart = ShoppingCart.query.filter_by(cartid=cart_id).first()
+
+    order = Order(userid,cartid,date.today(), cart.sum_items())
+
+    status = {
+        "message": "Order placed successfully",
+    }
+
+    new_cart = ShoppingCart(userid, date.today())
+
+    db.session.add(new_cart)
+    db.session.commit()
+
+    return jsonify(status=status), 201
 
 #Review----------------------------------------------
 

@@ -1,76 +1,101 @@
 <template>
-  <div class="cart-page">
-    <div class="blank-bar">
-      <h1>Shopping Cart</h1>
-      <div class="bar">
-
-      </div>
-    </div>
-    <div class="status-bar"></div>
-    <div class="cart-cont">
-      <table class="cart">
+  <div class="list-items-page">
+    <div class="cont">
+      <table class="list">
         <thead>
           <tr>
-            <th class="sticky">Qty</th>
             <th class="sticky">Product</th>
             <th class="sticky">Item Price</th>
-            <th class="sticky">Total</th>
           </tr>
         </thead>
         <tbody class="body-area">
-          <tr v-for="item in cart" :key="item.id">
-            <td>{{item.quantity}}</td>
+          <tr v-for="listItem in list" :key="listItem.id">
             <td>
               <!-- <img src="../assets/None.jpg"/> -->
-              <p>{{item.Item.item_name}}</p>
+              <p>{{listItem.Item.item_name}}</p>
             </td>
-            <td>${{item.Item.cost}}</td>
+            <td>${{listItem.Item.cost}}</td>
             <td>
-              <p>$150.00</p>
-              <button class="rem-bttn" @click="removeItem(item.item_id)">Remove from cart</button>
+              <button class="rem-bttn"
+              @click="removeItem(listItem.item_id)">Remove from list</button>
+              <button class="rem-bttn"
+              @click="addToCart(listItem.item_id, listItem.qty)">add to cart</button>
             </td>
           </tr>
         </tbody>
       </table>
-    </div>
-    <div class="checkout-area">
-      <button>Proceed to checkout</button>
+      <div class="nav-area">
+      </div>
     </div>
   </div>
 </template>
-<!-- change to comply with your preferred JS standard -->
+
 <script>
 /* eslint-disable */
-// import Navigation from '@/components/Navigation.vue'
-
 export default {
-  name: 'ShoppingCart',
+  name: "Lists",
   data: () => ({
+    list: [],
     message: '',
     error: '',
-    cart: [],
   }),
 
   methods: {
-    getItems: function() {
-      console.log("Fetching items from cart")
 
-      fetch('http://localhost:5000/api/users/' + this.$route.params.userid + '/cart', {
+    getList: function() {
+      console.log("fetching list items");
+      let usid = sessionStorage.getItem("usid");
+      let resp = '';
+
+      fetch('http://localhost:5000/api/users/' + usid + '/lists/' +
+      this.$route.params.listid, {
           method: 'GET',
           headers: {},
       })
       .then(function (response) {
+          resp = response.status;
           return response.json();
       })
       .then((jsonResponse) => {
-          this.cart = jsonResponse.status.cart;
-          console.log(jsonResponse);
+          console.log(jsonResponse.status.message);
+          this.message = jsonResponse.status.message;
+          this.list = jsonResponse.status.items;
+
       })
       .catch(function (error) {
           console.log(error);
       });
     },
 
+    addToCart: function(itemid,qty) {
+        console.log("adding item to cart");
+        let cart = sessionStorage.getItem('crtid');
+        let resp = '';
+
+        fetch('http://localhost:5000/api/items/' +
+          itemid + '/' + qty + '/cart/' + cart, {
+              method: 'POST',
+              headers: {},
+          })
+          .then(function (response) {
+              resp = response.status;
+              return response.json();
+          })
+          .then((jsonResponse) => {
+              console.log(jsonResponse);
+
+              if(resp === 201) {
+                this.message = jsonResponse.status.message;
+                console.log("OK, item added");
+                this.qty = 0;
+              } else {
+                console.log("Not OK");
+              }
+          })
+          .catch(function (error) {
+              console.log(error);
+          });
+      },
     removeItem: function(itemid) {
         console.log("Removing item from cart")
         let usid = sessionStorage.getItem('usid');
@@ -100,48 +125,18 @@ export default {
             console.log(error);
         });
     },
-
-    placeOrder: function() {
-        console.log("Checking out cart..")
-
-        fetch('')
-    },
-
-    calculateTtl: function(quant,price) {
-      console.log("calculaating..")
-    },
-
-    getLists: function() {
-        console.log("Getting users lists");
-        let usr = sessionStorage.getItem('usid');
-        console.log(usr)
-        fetch('http://localhost:5000/api/users/' + usr + '/lists',{
-          method: 'GET',
-          headers: {},
-        })
-        .then(function (response){
-          return response.json();
-        })
-        .then((jsonResponse) => {
-          console.log(jsonResponse)
-          this.lists = jsonResponse.status.lists;
-        })
-        .catch(function (error) {
-            console.log(error)
-        });
-    },
-
   },
+
   created: function () {
-    console.log("Fetching items for the user's cart");
-    this.getItems();
-    this.getLists();
+    console.log("lists page");
+    this.getList();
   }
 };
 /* eslint-enable */
 </script>
+
 <style>
-div.cart-page {
+div.list-items-page {
   display: grid;
   grid-template-rows: 20% 10% 60% 10%;
   border: 2px solid black;
@@ -150,21 +145,21 @@ div.cart-page {
   margin: 0 auto;
 }
 
-div.blank-bar {
-  grid-row: 1 / 2;
-}
-
-div.status {
-  grid-row: 2 / 3;
-}
-
-div.cart-cont {
+div.cont {
   grid-row: 3 / 4;
   border: 1px solid #464654;
   max-height: inherit;
   overflow-y: scroll;
   width: 80%;
   margin: 0 auto;
+}
+
+table.list {
+  border-collapse: collapse;
+  border: solid 2px black;
+  width: 100%;
+  table-layout: fixed;
+
 }
 
 button.rem-bttn {
@@ -179,25 +174,8 @@ button.rem-bttn:hover{
   color: white
 }
 
-div.checkout-area {
+div.nav-area {
   grid-row: 4 / 5;
-}
-
-div.checkout-area > button {
-    color: white;
-    background-color: #32a852;
-    border-radius: 5px;
-    border-style: none;
-    padding: 20px;
-    margin: 20px;
-}
-
-table.cart {
-  border-collapse: collapse;
-  border: solid 2px black;
-  width: 100%;
-  table-layout: fixed;
-
 }
 
 th,td {
@@ -236,8 +214,4 @@ tr:nth-child(even) {background-color: #46465446;}
   top: 0
 }
 
-
-img {
-  width: 100px;
-}
 </style>

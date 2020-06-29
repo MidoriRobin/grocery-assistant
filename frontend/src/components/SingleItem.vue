@@ -36,7 +36,6 @@
         </div>
         <div class="cart-ctrl">
             <input type="number" id="qty" name="quantity" value="0" v-model="qty" readonly/>
-            <p>{{ qty }}</p>
             <button type="button" @click="incr"> + </button>
             <button type="button" @click="decr"> - </button> <br>
             <button type="button" @click="addToCart">Add to cart</button>
@@ -85,6 +84,7 @@ export default {
     message: '',
     error: '',
     item: '',
+    lists: '',
     qty: 1,
   }),
 
@@ -180,6 +180,26 @@ export default {
         this.$router.push('/items');
     },
 
+    getLists: function() {
+        console.log("Getting users lists");
+        let usr = sessionStorage.getItem('usid');
+        console.log(usr)
+        fetch('http://localhost:5000/api/users/' + usr + '/lists',{
+          method: 'GET',
+          headers: {},
+        })
+        .then(function (response){
+          return response.json();
+        })
+        .then((jsonResponse) => {
+          console.log(jsonResponse)
+          this.lists = jsonResponse.status.lists;
+        })
+        .catch(function (error) {
+            console.log(error)
+        });
+    },
+
     incr: function() {
         console.log("incrementing quantity");
         this.qty = this.qty + 1;
@@ -201,6 +221,7 @@ export default {
   created: function () {
       console.log("Entered the item page");
       this.getItem();
+      this.getLists();
   }
 };
 

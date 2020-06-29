@@ -5,7 +5,7 @@
       <h3> Products </h3>
       <div class="recom-area">
         <p> To make this a special experience for you we've prepared some recommendations</p>
-        <button> See Recommendations </button>
+        <button @click="$router.push('/trythese')"> See Recommendations </button>
       </div>
     </div>
     <div class="menu">
@@ -37,7 +37,7 @@
       </ul>
     </div>
     <ul class="item-list">
-      <li v-for="item in items" :key="item.id">
+      <li v-for="(item,index) in items" :key="item.id">
         <router-link :to="{ name: 'SingleItem', params: { itemid: item.item_id }}">
           <img @click="goToItem(item.item_id)" class="plpic" src="../assets/None.jpg" alt="">
         </router-link>
@@ -46,10 +46,12 @@
           <p>{{item.desc_item}}</p>
         </div>
         <div class="cart-area">
-          <input type="number" name="quantity" value="0" size="4" readonly/>
-          <button type="button" class="add"> + </button>
-          <button type="button" class="sub"> - </button>
-          <button type="button" @click="goToItem(item.item_id)" name="profile">Add to cart</button>
+          <input type="number" id="qty" name="quantity" value="0"
+          v-model="item_qty[index].value" readonly/>
+          <button type="button" @click="incr(index)" class="add"> + </button>
+          <button type="button" @click="decr(index)" class="sub"> - </button>
+          <button type="button" @click="addToCart(item.item_id,index)"
+          name="profile">Add to cart</button>
         </div>
       </li>
     </ul>
@@ -68,7 +70,7 @@ export default {
       curr_page: '',
       prev_page: '',
       next_page: '',
-      item_qty: [],
+      item_qty: [{value:1},{value:1},{value:1},{value:1},{value:1},{value:1},{value:1},{value:1},{value:1},{value:1}],
   }),
 
   methods: {
@@ -102,13 +104,13 @@ export default {
         this.$router.push('/items/' + itemid);
     },
 
-    addToCart: function(itemid,qty) {
+    addToCart: function(itemid,index) {
         console.log("adding item to cart");
         let cart = sessionStorage.getItem('crtid');
         let resp = '';
 
         fetch('http://localhost:5000/api/items/' +
-          this.item.item_id + '/' + this.qty + '/cart/' + cart, {
+          itemid + '/' + this.item_qty[index].value + '/cart/' + cart, {
               method: 'POST',
               headers: {},
           })
@@ -121,7 +123,7 @@ export default {
 
               if(resp === 201) {
                 console.log("OK, item added");
-                this.qty = 0;
+                this.item_qty[index].value = 0;
               } else {
                 console.log("Not OK");
               }
@@ -131,9 +133,23 @@ export default {
           });
     },
 
-    // chkLogin: function() {
-    //   if sessionStorage.
-    // }
+    incr: function(index) {
+        console.log("incrementing quantity");
+        this.item_qty[index].value = this.item_qty[index].value + 1;
+        console.log(this.item_qty[index].value);
+        // return qty
+    },
+
+    decr: function(index) {
+        console.log("decrementing quantity");
+        if (this.item_qty[index].value < 1) {
+          console.log("quantity less than 1!");
+        } else {
+          this.item_qty[index].value = this.item_qty[index].value - 1;
+        }
+
+        console.log(this.item_qty[index].value);
+    },
   },
   created: function () {
       console.log("entered the item page");
