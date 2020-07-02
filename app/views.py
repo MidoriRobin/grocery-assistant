@@ -407,6 +407,7 @@ def list(userid,listid):
     items = list.view_items()
     status = {
         "message": "Displaying all items in the shopping list chosen",
+        "list": list.to_dict(),
         "items": items
     }
 
@@ -500,7 +501,7 @@ def order(orderid):
 @app.route('/api/users/<userid>/cart/<cartid>/orders', methods=['POST'])
 def make_order(userid,cartid):
     #IMplement simulated order cart-table > order-table
-    cart = ShoppingCart.query.filter_by(cartid=cart_id).first()
+    cart = ShoppingCart.query.filter_by(cart_id=cartid).first()
 
     order = Order(userid,cartid,date.today(), cart.sum_items())
 

@@ -13,18 +13,7 @@
             <li><h4>{{item.item_name}}</h4></li>
             <li><p> Brand: {{ item.brand }} </p></li>
             <li><p> Price: ${{ item.cost }} </p></li>
-            <li>
-              <form class="form-review" @submit.prevent="reviewItem" id="reviewForm" method="post">
-                <label for="rating">Rate: </label>
-                <select name="rating">
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                </select>
-              </form>
-            </li>
+            <li><p>Rating: {{rating}}</p></li>
           </ul>
         </div>
         <button @click="scrllToReview">Leave a Review</button>
@@ -66,6 +55,12 @@
         <button type="submit"> Submit </button>
       </form>
     </div>
+    <v-snackbar
+    v-model="snackbar"
+    :timeout="timeout"
+    >
+      Test
+    </v-snackbar>
   </div>
 </template>
 
@@ -81,10 +76,13 @@ export default {
     Flash
   },
   data: () => ({
+    snackbar: false,
+    timeout: 2000,
     message: '',
     error: '',
     item: '',
     lists: '',
+    rating: 4.5,
     qty: 1,
   }),
 
@@ -134,8 +132,9 @@ export default {
 
     scrllToReview: function() {
       let elmnt = document.getElementById('reviewForm');
-
+      console.log(elmnt);
       elmnt.scrollIntoView(true);
+      this.snackbar = true;
     },
 
     addToCart: function() {

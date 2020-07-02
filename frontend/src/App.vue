@@ -9,17 +9,18 @@
       <li><router-link to="/signup">Signup</router-link></li>
       <li><router-link to="/landing">Landing</router-link></li>
       <li><router-link to="/lists">Shopping List</router-link></li>
+      <li><router-link to="/orders">Orders</router-link></li>
       <li v-if="show"><button id="navi" @click="logout">Logout</button></li>
-      <div class="dropdown">
-        <!-- <li><a>Menu</a></li> -->
+      <!-- <div class="dropdown">
+         <li><a>Menu</a></li>
         <button class="dropbtn">Menu</button>
-        <!-- <a class="dropbtn">Menu <i class="fa fa-caret-down"></i></a> -->
+         <a class="dropbtn">Menu <i class="fa fa-caret-down"></i></a>
         <div class="dropdown-content">
           <a href="#">Aisle 1<p>-Meat and Animal Products</p></a>
           <a href="#">Aisle 2</a>
           <a href="#">Aisle 3</a>
         </div>
-      </div>
+      </div> -->
     </ul>
     <router-view/>
   </div>

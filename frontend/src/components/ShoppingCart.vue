@@ -34,7 +34,7 @@
       </table>
     </div>
     <div class="checkout-area">
-      <button>Proceed to checkout</button>
+      <button @click="$router.push('/payment')">Proceed to checkout</button>
     </div>
   </div>
 </template>

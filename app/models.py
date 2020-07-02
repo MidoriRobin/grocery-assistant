@@ -274,19 +274,27 @@ class Order(db.Model):
 
     def __init__(self, acc_num, cartid, date_order, cost, deliv_time="N/A"):
         self.acc_num = acc_num
-        self.cart_id = cart_id
+        self.cart_id = cartid
         self.deliv_id = deliv_time
         self.sale_value = cost
         self.date_ordered = date_order
 
+    def fetch_items(self):
+
+        cart = ShoppingCart.query.filter_by(cart_id=cart_id).first()
+
+        return cart.fetch_all_items()
+
     def to_dict(self):
 
         dict = {
+            "orderid": self.order_id,
             "acc_num": self.acc_num,
             "cartid": self.cart_id,
             "deliv_id": self.deliv_id,
             "sale_value": self.sale_value,
-            "date_ordered": self.date_ordered
+            "date_ordered": self.date_ordered,
+            "no_items": len(self.fetch_items())
         }
 
         return dict
@@ -477,7 +485,6 @@ class ListItem(db.Model):
 
     def fetch_item(self):
         return Item.query.filter_by(item_id=self.item_id).first()
-
 
 
 class Usi(db.Model):

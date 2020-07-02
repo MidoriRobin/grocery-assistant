@@ -13,6 +13,8 @@ import Signup from '../components/Signup.vue';
 import Recommendation from '../components/Recommendation.vue';
 import Lists from '../components/Lists.vue';
 import List from '../components/List.vue';
+import Orders from '../components/Orders.vue';
+import Order from '../components/Order.vue';
 
 
 Vue.use(VueRouter);
@@ -85,6 +87,16 @@ const routes = [
     path: '/lists/:listid',
     name: 'List',
     component: List,
+  },
+  {
+    path: '/orders/',
+    name: 'Orders',
+    component: Orders,
+  },
+  {
+    path: '/orders/:orderid',
+    name: 'Order',
+    component: Order,
   },
 ];
 

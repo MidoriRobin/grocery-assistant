@@ -1,5 +1,6 @@
 <template>
   <div class="list-items-page">
+    <h2>{{ listInfo.name }}</h2>
     <div class="cont">
       <table class="list">
         <thead>
@@ -24,8 +25,12 @@
           </tr>
         </tbody>
       </table>
-      <div class="nav-area">
-      </div>
+    </div>
+    <div class="nav-area">
+      <button @click="$router.push('/lists')">Back</button>
+      <button
+      @click="goToCart()">
+      To Cart</button>
     </div>
   </div>
 </template>
@@ -36,6 +41,7 @@ export default {
   name: "Lists",
   data: () => ({
     list: [],
+    listInfo: '',
     message: '',
     error: '',
   }),
@@ -60,6 +66,7 @@ export default {
           console.log(jsonResponse.status.message);
           this.message = jsonResponse.status.message;
           this.list = jsonResponse.status.items;
+          this.listInfo = jsonResponse.status.list;
 
       })
       .catch(function (error) {
@@ -96,6 +103,7 @@ export default {
               console.log(error);
           });
       },
+
     removeItem: function(itemid) {
         console.log("Removing item from cart")
         let usid = sessionStorage.getItem('usid');
@@ -125,8 +133,14 @@ export default {
             console.log(error);
         });
     },
-  },
 
+    goToCart: function() {
+      console.log("Navigating to cart..");
+      // let meid = sessionStorage.getItem('usid');
+      let usid = sessionStorage.getItem('usid');
+      this.$router.push('/users/' + usid + '/cart');
+    },
+  },
   created: function () {
     console.log("lists page");
     this.getList();
