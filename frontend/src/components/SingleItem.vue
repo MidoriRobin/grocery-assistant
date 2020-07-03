@@ -1,9 +1,8 @@
 <!-- this page displays the details of an items, is a result of clicking 'Click for more!'  -->
 <template>
   <div class="item-page">
-    <Flash :message="message"/>
     <!-- <h1>This is the Single Item Page</h1> -->
-    <div class="about-item">
+    <div class="about-item" id="aboutItem">
       <div class="item-img">
         <img src="../assets/None.jpg"/>
       </div>
@@ -45,12 +44,21 @@
         </div>
       </div>
     </div>
+    <div class="othr-disp">
+      <Flash :message="message"/>
+      <ul class="reviews">
+        <li>
+          <p> Reviews go here </p>
+        </li>
+      </ul>
+    </div>
     <div class="nav-area">
       <div class="nav-buttons">
         <button @click="returnToItems">Back</button>
         <button @click="goToCart">To Cart</button>
       </div>
       <form class="form-review" @submit.prevent="reviewItem" id="reviewForm" method="post">
+        <input name="userid" :value="usid" hidden>
         <ul>
           <li>
             <textarea name="review" rows="10" cols="50" placeholder="Leave a review"></textarea>
@@ -69,12 +77,6 @@
         <button type="submit"> Submit </button>
       </form>
     </div>
-    <v-snackbar
-    v-model="snackbar"
-    :timeout="timeout"
-    >
-      Test
-    </v-snackbar>
   </div>
 </template>
 
@@ -96,8 +98,10 @@ export default {
     error: '',
     item: '',
     lists: '',
+    reviews: [],
     rating: 4.5,
     qty: 1,
+    usid: sessionStorage.getItem("usid",)
   }),
 
   methods: {
@@ -137,6 +141,7 @@ export default {
         })
         .then((jsonResponse) => {
             this.message = jsonResponse.status.message;
+            this.scrllToItem();
             console.log(jsonResponse);
         })
         .catch(function (error) {
@@ -148,7 +153,12 @@ export default {
       let elmnt = document.getElementById('reviewForm');
       console.log(elmnt);
       elmnt.scrollIntoView(true);
-      this.snackbar = true;
+    },
+
+    scrllToItem: function() {
+      let elmnt = document.getElementById('aboutItem');
+      console.log(elmnt);
+      elmnt.scrollIntoView(true);
     },
 
     addToCart: function() {
@@ -267,6 +277,7 @@ export default {
 li {
   list-style-type: none;
 }
+
 div.item-page {
   display: grid;
   grid-template-rows: 50% 50%;
@@ -322,6 +333,7 @@ div.interct-area > button {
   width: 50%;
   margin: auto;
   margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 div.item-desc {
@@ -353,4 +365,13 @@ div.nav-buttons {
   border: 1px solid grey;
 }
 
+div.othr-disp {
+    grid-row: 2 / 3;
+    display: grid;
+    grid-template-rows: 10% 90%
+}
+
+.othr-disp > div.flash-area {
+  grid-row: 1 / 2;
+}
 </style>

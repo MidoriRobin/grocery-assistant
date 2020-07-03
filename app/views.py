@@ -524,12 +524,12 @@ def make_order(userid,cartid):
 def review_item(itemid):
 
     if request.method == 'POST':
-        rCheck = Review.query.filter_by(acc_num=request.form['userid'], item_id=request.form['itemid']).first()
+        rCheck = Review.query.filter_by(acc_num=request.form['userid'], item_id=itemid).first()
 
         if rCheck:
             rCheck.rating = request.form['rating']
         else:
-            review = Review(request.form['userid'],request.form['itemid'],request.form['rating'])
+            review = Review(request.form['userid'],itemid,request.form['rating'])
             db.session.add(review)
 
     db.session.commit()
