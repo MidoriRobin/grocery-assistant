@@ -1,6 +1,6 @@
 <template>
   <div class="orders-page">
-    <ul v-if="orders === []">
+    <ul v-if="orders != []">
       <li v-for="order in orders" :key="order.id">
         <router-link :to="{ name: 'Order', params: { orderid: order.order_id }}">
           <h4>{{ order.date_ordered }}</h4>

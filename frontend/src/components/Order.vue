@@ -20,7 +20,7 @@
           <th>Qty</th>
           <th>Price</th>
         </tr>
-        <tr>
+        <tr >
           <!-- use directive to display all the orders -->
         </tr>
       </table>
