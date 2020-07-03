@@ -18,7 +18,7 @@
             <td>${{listItem.Item.cost}}</td>
             <td>
               <button class="rem-bttn"
-              @click="removeItem(listItem.item_id)">Remove from list</button>
+              @click="removeItem(listItem.list_id, listItem.item_id)">Remove from list</button>
               <button class="rem-bttn"
               @click="addToCart(listItem.item_id, listItem.qty)">add to cart</button>
             </td>
@@ -104,14 +104,14 @@ export default {
           });
       },
 
-    removeItem: function(itemid) {
-        console.log("Removing item from cart")
+    removeItem: function(listid, itemid) {
+        console.log("Removing item from list")
         let usid = sessionStorage.getItem('usid');
         let crtid = sessionStorage.getItem('crtid');
         let resp = '';
 
         console.log(itemid);
-        fetch('http://localhost:5000/api/users/' + usid + '/cart/' + crtid + '/'+ itemid, {
+        fetch('http://localhost:5000/api/users/lists/' + listid + '/' + itemid, {
             method: 'DELETE',
             headers: {},
         })
@@ -123,8 +123,8 @@ export default {
             console.log(jsonResponse);
 
             if(resp === 201) {
-              console.log("OK, deleted from cart");
-              this.getItems();
+              console.log("OK, deleted from list");
+              this.getList();
             } else {
               console.log("Not OK");
             }

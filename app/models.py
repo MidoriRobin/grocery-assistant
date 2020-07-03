@@ -3,6 +3,7 @@ from sqlalchemy.dialects.mysql import INTEGER
 from sqlalchemy.orm import relationship
 from . import db
 from werkzeug.security import generate_password_hash
+from datetime import date
 
 class UserProfile(db.Model):
     __tablename__ = 'user_profiles'
@@ -136,9 +137,26 @@ class Usr(db.Model):
         self.diet_pref = diet_pref
         self.password = generate_password_hash(password, method='pbkdf2:sha256')
 
+    def make_cart(self):
+        print("creating a new cart")
+
+        cart = ShoppingCart(self.acc_num, date.today())
+
+        db.session.add(cart)
+        db.session.commit()
+
+        return ("cart made")
+
     def get_cartid(self):
 
         cart = ShoppingCart.query.filter_by(acc_num=self.acc_num).order_by(ShoppingCart.cart_id.desc()).first()
+
+        if cart is not None:
+            print("cart fetched")
+        else:
+            print("user has no cart")
+            self.make_cart()
+            cart = ShoppingCart.query.filter_by(acc_num=self.acc_num).order_by(ShoppingCart.cart_id.desc()).first()
 
         return cart.cart_id
 

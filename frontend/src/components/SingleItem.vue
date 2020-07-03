@@ -16,7 +16,21 @@
             <li><p>Rating: {{rating}}</p></li>
           </ul>
         </div>
-        <button @click="scrllToReview">Leave a Review</button>
+        <div class="interct-area">
+          <button @click="scrllToReview">Leave a Review</button>
+          <form class="form-list-add" @submit.prevent="addToList"
+          id="addList" method="post">
+            <label for="listname"> List: </label>
+            <select name="listname">
+              <option v-for="list in lists" :key="list.id" :value="list.list_id">
+                {{ list.name }}
+              </option>
+            </select>
+            <label for="quantity" hidden> Qty </label>
+            <input type="number" name="quantity" value="1" hidden>
+            <button type="submit" >Add to list</button>
+          </form>
+        </div>
         <div class="item-desc">
           <h5>Description</h5>
           <p>
@@ -199,6 +213,29 @@ export default {
         });
     },
 
+    addToList: function() {
+      console.log("Adding item to list");
+
+      let listAddForm = document.getElementById('addList');
+      let formData = new FormData(listAddForm);
+      fetch('http://localhost:5000/api/items/' + this.$route.params.itemid
+       + '/lists/',{
+        method: 'POST',
+        body: formData,
+        headers: {},
+      })
+      .then(function (response){
+        return response.json();
+      })
+      .then((jsonResponse) => {
+        console.log(jsonResponse)
+        this.message = jsonResponse.status.message;
+      })
+      .catch(function (error) {
+          console.log(error)
+      });
+    },
+
     incr: function() {
         console.log("incrementing quantity");
         this.qty = this.qty + 1;
@@ -277,13 +314,14 @@ div.item-info > ul {
   font-weight: bold;
 } */
 
-div.about > button {
+div.interct-area > button {
   padding: 0;
   border-radius: 5px;
   border: 1px solid grey;
   height: 20%;
   width: 50%;
   margin: auto;
+  margin-top: 10px;
 }
 
 div.item-desc {

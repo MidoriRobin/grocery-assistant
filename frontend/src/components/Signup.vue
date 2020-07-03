@@ -56,8 +56,15 @@
         </select>
       </div>
       <div>
-        <label for="dietpref">Diet Preference</label>
-        <input type="text" name="dietpref" required>
+        <label for="dietpref">Diet Preference: </label>
+        <select name="dietpref">
+          <option value="Vegetarian">Vegetarian</option>
+          <option value="High Carb">High Carb</option>
+          <option value="Low Carb">Low Carb</option>
+          <option value="High Protien">High Protien</option>
+          <option value="Meat Lover">Meat Lover</option>
+          <option value="Pescatarian">Pescatarian</option>
+        </select>
       </div>
       <div>
         <label for="password">Password</label>
@@ -104,7 +111,7 @@ export default {
         .then((jsonResponse) => {
             console.log(jsonResponse);
             this.message = jsonResponse.status.message
-            this.$router.push('/');
+            this.$router.push('/login');
         })
         .catch((error) => {
           console.log(error);

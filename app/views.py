@@ -90,7 +90,7 @@ def login():
         if int(username) in range(1234,1333):
             print("this is a test user..")
             user = Usr.query.filter_by(acc_num=username).first()
-            if user is not None:
+            if user is not None and user.password == password:
                 login_user(user)
                 print("User logged in")
                 session['cartid'] = user.get_cartid()
@@ -170,6 +170,7 @@ def signup():
         db.session.add(user)
         db.session.commit()
 
+
         flash('success','')
 
         status = {
@@ -178,14 +179,13 @@ def signup():
 
     else:
         status = {
-            "errors":[
-                form_errors(form)
-            ]
+            "message": "Error in signup",
+            "errors": form_errors(form)
         }
         # return redirect(url_for('home'))
     # return render_template('signup.html', form=form)
 
-    return jsonify(status=status)
+    return jsonify(status=status), 201
 
 
 @login_manager.user_loader
@@ -308,9 +308,9 @@ def cart(userid):
     itemList = cart.fetch_all_items()
 
     status = {
-        "message": "cart successfully fetched",
-        "cart": itemList,
-        "total_cost": str(cart.sum_items())
+    "message": "cart successfully fetched",
+    "cart": itemList,
+    "total_cost": str(cart.sum_items())
     }
 
     flash("cart successfully fetched")
@@ -416,9 +416,9 @@ def list(userid,listid):
     # return render_template('/test-templates/list.html', items=items, list=list)
     return jsonify(status=status)
 
-@app.route('/api/items/<itemid>/lists/<listid>', methods=['POST'])
+@app.route('/api/items/<itemid>/lists/', methods=['POST'])
 # @login_required
-def add_item_list(itemid,listid):
+def add_item_list(itemid):
     """Route to add an item to a specific list"""
 
     #sList = ShoppingList.query.filter_by(list_id=listid).first()
@@ -460,7 +460,7 @@ def remove_from_list(listid,itemid):
     flash("Item successfully deleted")
     # return status
     # return redirect(url_for('list', listid=listid, userid=current_user.acc_num))
-    return jsonify(status=status)
+    return jsonify(status=status), 201
 
 #Courier----------------------------------------------
 @app.route('/courier', methods=['GET'])

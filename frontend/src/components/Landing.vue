@@ -1,6 +1,5 @@
 <template>
 <div class="landing">
-  <Navigation/>
   <div class="cta">
     <h1>Welcome to Quikshop!</h1>
     <p>Sed laoreet urna dolor, ut feugiat ipsum tempor ac.

@@ -98,12 +98,12 @@ class RecomHandler():
         Converts a newly added user's preference into a list of food types.
         """
         p_List = {
-        'Vegetarian' : ["Cereal"],
-        'High Carb' : ["Dairy",],
-        'Low Carb' : ["Seafood","Canned Products"],
-        'High Protien' : ["Seafood", "Meat", "Dairy"],
-        'Meat Lover' : ["Seafood", "Meat"],
-        'Pescatarian' : ["Seafood", "Cereal"],
+        'Vegetarian' : ["VITAMINS"],
+        'High Carb' : ["CHEESE",],
+        'Low Carb' : ["COOKIES","Canned Products"],
+        'High Protien' : ["Seafood", "FROZEN MEAT", "EGGS"],
+        'Meat Lover' : ["Seafood", "Meat", "SOUP"],
+        'Pescatarian' : ["Seafood", "Cereal", "FRZN FRUITS"],
         }
 
         if pref not in p_List:
