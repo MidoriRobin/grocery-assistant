@@ -2,7 +2,9 @@
   <div class="login-form">
     <Flash :message="message"/>
     <Flash :error="error"/>
-    <h2>Please Log in</h2>
+    <h2>Log in</h2>
+    <p>Enter your login credentials</p>
+    <hr>
     <form class="form-login" @submit.prevent="LoginUser" id="loginForm" method="post">
       <div class="form-group">
         <label for="username" class="sr-only">Username</label>
@@ -74,7 +76,9 @@ export default {
 /* eslint-enable */
 </script>
 <style>
-
+.login-form {
+  background: white;
+}
 div.login-form{
   height: 20%;
   width: 500px;
