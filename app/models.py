@@ -211,7 +211,7 @@ class Item(db.Model):
     __bind_key__ = 'cpstnpro'
     __tablename__ = 'items'
 
-    item_id = db.Column(db.Integer, primary_key=True)
+    item_id = db.Column(db.Integer, primary_key=True, nullable=False, index=True)
     item_name = db.Column(db.String(100))
     cost = db.Column(DECIMAL(10, 2))
     department = db.Column(db.String(50))
@@ -281,7 +281,7 @@ class Order(db.Model):
 
     def fetch_items(self):
 
-        cart = ShoppingCart.query.filter_by(cart_id=cart_id).first()
+        cart = ShoppingCart.query.filter_by(cart_id=self.cart_id).first()
 
         return cart.fetch_all_items()
 
@@ -291,8 +291,8 @@ class Order(db.Model):
             "orderid": self.order_id,
             "acc_num": self.acc_num,
             "cartid": self.cart_id,
-            "deliv_id": self.deliv_id,
-            "sale_value": self.sale_value,
+            "deliv_time": self.deliv_time,
+            "sale_value": str(self.sale_value),
             "date_ordered": self.date_ordered,
             "no_items": len(self.fetch_items())
         }
@@ -311,8 +311,8 @@ class ShoppingCart(db.Model):
     usr = relationship('Usr')
 
     def __init__(self, acc_num, date_created):
-        this.acc_num = acc_num
-        this.date_created = date_created
+        self.acc_num = acc_num
+        self.date_created = date_created
 
     def to_dict(self):
 
