@@ -484,8 +484,8 @@ def orders(userid):
     return jsonify(status=status), 201
 
 @app.route('/api/users/<userid>/orders/<orderid>', methods=['GET'])
-def order(orderid):
-
+def order(userid,orderid):
+    print("fetching order")
     order = Order.query.filter_by(order_id=orderid).first()
 
     cart = ShoppingCart.query.filter_by(cart_id=order.cart_id).first()
@@ -504,6 +504,8 @@ def make_order(userid,cartid):
     cart = ShoppingCart.query.filter_by(cart_id=cartid).first()
 
     order = Order(userid,cartid,date.today(), cart.sum_items())
+    db.session.add(order)
+    db.session.commit()
 
     status = {
         "message": "Order placed successfully",
