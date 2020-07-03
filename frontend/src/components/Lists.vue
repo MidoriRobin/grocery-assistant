@@ -114,6 +114,7 @@ div.list-page {
   margin: 0 auto;
   margin-top: 50px;
   margin-bottom: 50px;
+  background: white;
 }
 
 div.list-area {
