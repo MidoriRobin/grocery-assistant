@@ -7,11 +7,11 @@
 <!-- change to comply with your preferred JS standard -->
 <script>
 export default {
-  name: "",
+  name: '',
   data: () => ({
 
-  })
-}
+  }),
+};
 </script>
 <style lang="scss" scoped>
 </style>

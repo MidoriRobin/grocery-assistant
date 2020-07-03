@@ -7,7 +7,7 @@
       <li><router-link to="/ping">Ping</router-link></li>
       <li><router-link to="/login">Login</router-link></li>
       <li><router-link to="/signup">Signup</router-link></li>
-      <li><router-link to="/landing">Landing</router-link></li>
+      <li><router-link to="/items">Items</router-link></li>
       <li><router-link to="/lists">Shopping List</router-link></li>
       <li><router-link to="/orders">Orders</router-link></li>
       <li v-if="show"><button id="navi" @click="logout">Logout</button></li>

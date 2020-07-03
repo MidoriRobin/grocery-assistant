@@ -6,11 +6,11 @@
 
 <script>
 export default {
-  name: "",
+  name: '',
   data: () => ({
 
-  })
-}
+  }),
+};
 </script>
 
 <style>
