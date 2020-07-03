@@ -1,4 +1,4 @@
-from sqlalchemy import CHAR, Column, DECIMAL, Enum, ForeignKey, String
+from sqlalchemy import CHAR, Column, DECIMAL, Enum, ForeignKey, String, Text
 from sqlalchemy.dialects.mysql import INTEGER
 from sqlalchemy.orm import relationship
 from . import db
@@ -363,6 +363,7 @@ class Review(db.Model):
 
     acc_num = db.Column(db.ForeignKey('usr.acc_num'), primary_key=True, nullable=False)
     item_id = db.Column(db.ForeignKey('items.item_id'), primary_key=True, nullable=False, index=True)
+    rating_desc = db.Column(db.Text)
     ratings = db.Column(db.Enum('1', '2', '3', '4', '5', name='rating_levels'))
 
     usr = relationship('Usr')
