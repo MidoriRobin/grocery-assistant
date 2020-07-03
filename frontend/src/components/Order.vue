@@ -7,21 +7,19 @@
       <li>Order Date: {{ order.date_ordered }}</li>
       <li>Order Total: ${{ order.sale_value}}</li>
     </ul>
-    <div class="summary">
-      <p> </p>
-      <p></p>
-      <p></p>
-    </div>
     <!-- displays all the items from your cart -->
     <div class="order-section">
-      <table>
+      <table cellspacing=0>
         <tr>
           <th>Items Shipped</th>
           <th>Qty</th>
           <th>Price</th>
         </tr>
-        <tr >
+        <tr v-for="item in items" :key="item.id">
           <!-- use directive to display all the orders -->
+          <td>{{ item.Item.item_name }}-</td>
+          <td>{{item.quantity}}</td>
+          <td> {{ item.Item.cost }}</td>
         </tr>
       </table>
 
@@ -38,6 +36,7 @@
         order: '',
         message: '',
         errors: '',
+        items: '',
       };
     },
 
@@ -60,6 +59,7 @@
             console.log(jsonResponse.status);
             this.message = jsonResponse.status.message;
             this.order = jsonResponse.status.order;
+            this.items = jsonResponse.status.items;
         })
         .catch(function (error){
           console.log(error);
@@ -75,6 +75,15 @@
 /* eslint-enable */
 </script>
 <style scoped>
+ul.summary > li{
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+table{
+  width: 100%;
+  background: white;
+  height:
+}
 
 ul.summary{
   background-color: white;
