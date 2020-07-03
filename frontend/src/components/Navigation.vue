@@ -3,7 +3,8 @@
       <a class="heading" @click="goHome"><h1>LOGO</h1></a>
 
       <!-- <li><a href="#"></a></li> -->
-      <li><a href="#">Login</a></li>
+      <li><router-link :to="{ path: '/login' }">Login</router-link></li>
+      <!-- <li><a href="#">Login</a></li> -->
       <li><a href="#">Signup</a></li>
       <li><a href="#">Contact Us</a></li>
     </ul>

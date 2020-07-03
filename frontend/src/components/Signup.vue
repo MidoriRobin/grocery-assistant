@@ -3,52 +3,53 @@
     <Flash :message="message"/>
     <Flash :error="error"/>
     <h3> Sign-Up </h3>
+    <hr>
     <form class="form-sign" @submit.prevent="SignupUser" id="signForm" method="post">
       <div>
-        <label for="firstname">First Name: </label>
+        <label for="firstname">First Name</label>
         <input type="text" name="firstname">
       </div>
       <div>
-        <label for="lastname">Last Name: </label>
+        <label for="lastname">Last Name </label>
         <input type="text" name="lastname">
       </div>
       <div>
-        <label for="gender">Gender: </label>
+        <label for="gender">Gender </label>
         <select name="gender">
           <option value="male">Male</option>
           <option value="female">Female</option>
         </select>
       </div>
       <div>
-        <label for="email">Email: </label>
+        <label for="email">Email</label>
         <input type="email" name="email" required>
       </div>
       <div>
-        <label for="phone">Phone: </label>
+        <label for="phone">Phone </label>
         <input type="text" name="phone" required>
       </div>
       <div>
-        <label for="city">City: </label>
+        <label for="city">City </label>
         <input type="text" name="city" required>
       </div>
       <div>
-        <label for="street">Street: </label>
+        <label for="street">Street </label>
         <input type="text" name="street" required>
       </div>
       <div>
-        <label for="hhsize">House Hold Size: </label>
+        <label for="hhsize">House Hold Size </label>
         <input type="number" name="hhsize" required>
       </div>
       <div>
-        <label for="adlts">Adults in House: </label>
+        <label for="adlts">Adults in House</label>
         <input type="number" name="adlts" required>
       </div>
       <div>
-        <label for="kids">Children in House: </label>
+        <label for="kids">Children in House </label>
         <input type="number" name="kids" required>
       </div>
       <div>
-        <label for="maritalstat">Marital Status: </label>
+        <label for="maritalstat">Marital Status </label>
         <select name="maritalstat">
           <option value="single">Single</option>
           <option value="married">Married</option>
@@ -66,7 +67,7 @@
         </select>
       </div>
       <div>
-        <label for="password">Password: </label>
+        <label for="password">Password</label>
         <input type="password" name="password" required>
       </div>
       <div class="submit-btn">
@@ -127,9 +128,29 @@ form > div {
   padding-top: 10px;
 
 }
+input, select{
+  display: inline-block;
+  background-color: white;
+  width: 60%;
+  border:none;
+  background-color: #D3D3D3;
+  height: 30px;
+  radius: 5px;
+  align-self: center;
 
+}
+
+div > label, div >input{
+  margin-bottom: 10px;
+}
+
+div > label{
+  display: inline-block;
+  width: 20%;
+  text-align: left;
+}
 .signup-page {
-  background-image: url("background2.jpg");
+  /* background-image: url("background2.jpg"); */
   width: 50%;
   background-color: white;
   margin-left: auto;
@@ -141,6 +162,8 @@ form > div {
   margin-bottom: 30px;
   margin-top: 60px;
   padding-bottom: 50px;
+  box-shadow: 2px 3px #90ee90;
+  border:none;
 }
 
 .signup-page h3{
