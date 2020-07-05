@@ -473,7 +473,7 @@ def courier(arg):
 @app.route('/api/users/<userid>/orders/', methods=['GET'])
 def orders(userid):
 
-    orders = Order.query.filter_by(acc_num=userid).all()
+    orders = Order.query.filter_by(acc_num=userid).order_by(Order.order_id.desc()).all()
 
     status = {
         "message": "Orders successfully fetched",
@@ -544,6 +544,17 @@ def review_item(itemid):
     # return redirect(url_for('products',itemid=itemid))
     return jsonify(status=status)
 
+@app.route('/api/items/<itemid>/review/', methods=['GET'])
+def get_reviews(itemid):
+
+    reviews = Review.query.filter_by(item_id=itemid).all()
+
+    status = {
+        "message": "Reviews fetched sucessfully",
+        "reviews": [review.to_dict() for review in reviews]
+    }
+
+    return jsonify(status=status), 201
 
 #Locally required functions
 

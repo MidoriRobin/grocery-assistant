@@ -17,7 +17,7 @@
         </div>
         <div class="interct-area">
           <button @click="scrllToReview">Leave a Review</button>
-          <form class="form-list-add" @submit.prevent="addToList"
+          <form v-if="usid" class="form-list-add" @submit.prevent="addToList"
           id="addList" method="post">
             <label for="listname"> List: </label>
             <select name="listname">
@@ -29,6 +29,7 @@
             <input type="number" name="quantity" value="1" hidden>
             <button type="submit" >Add to list</button>
           </form>
+          <h6 v-else> Sign in to create and add items to a list </h6>
         </div>
         <div class="item-desc">
           <h5>Description</h5>
@@ -47,8 +48,11 @@
     <div class="othr-disp">
       <Flash :message="message"/>
       <ul class="reviews">
-        <li>
-          <p> Reviews go here </p>
+        <li v-for="review in reviews" :key="review.id">
+          <h5> {{ review.user_name }} </h5>
+          <p> {{ review.rating }} <p>
+          <p v-if="review.rating_desc"> {{  review.rating_desc }} </p>
+          <p v-else> <em> No comment made </em> </p>
         </li>
       </ul>
     </div>
@@ -92,8 +96,6 @@ export default {
     Flash
   },
   data: () => ({
-    snackbar: false,
-    timeout: 2000,
     message: '',
     error: '',
     item: '',
@@ -125,6 +127,27 @@ export default {
       });
     },
 
+    getReviews: function() {
+      console.log("Fetching reviews for this item");
+      let resp = '';
+      fetch('http://localhost:5000/api/items/' + this.$route.params.itemid + '/review/',
+      {
+          method: 'GET',
+          headers: {}
+      })
+      .then(function (response){
+          resp = response.status;
+          return response.json();
+      })
+      .then((jsonResponse) => {
+          console.log(jsonResponse.status.message);
+          this.reviews = jsonResponse.status.reviews;
+      })
+      .catch(function (error) {
+          console.log(error);
+      });
+    },
+
     reviewItem: function() {
         console.log("Reviewing item");
 
@@ -142,6 +165,7 @@ export default {
         .then((jsonResponse) => {
             this.message = jsonResponse.status.message;
             this.scrllToItem();
+            this.getReviews();
             console.log(jsonResponse);
         })
         .catch(function (error) {
@@ -267,7 +291,12 @@ export default {
   created: function () {
       console.log("Entered the item page");
       this.getItem();
-      this.getLists();
+      this.getReviews();
+      if ( "usid" in sessionStorage) {
+        this.getLists();
+      } else {
+        console.log("No user logged in");
+      }
   }
 };
 
@@ -374,4 +403,9 @@ div.othr-disp {
 .othr-disp > div.flash-area {
   grid-row: 1 / 2;
 }
+
+#reviewForm > input {
+  display: none;
+}
+
 </style>
