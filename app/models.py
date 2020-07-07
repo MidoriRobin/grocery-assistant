@@ -394,11 +394,14 @@ class Review(db.Model):
         self.ratings = rating
 
     def to_dict(self):
+        user = Usr.query.filter_by(acc_num=self.acc_num).first()
 
         dict = {
             "acc_num": self.acc_num,
+            "user_name": user.fname,
             "item_id": self.item_id,
-            "rating": self.rating
+            "rating_desc": self.rating_desc,
+            "rating": self.ratings
         }
 
         return dict

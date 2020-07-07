@@ -162,7 +162,7 @@ div > label{
   margin-bottom: 30px;
   margin-top: 60px;
   padding-bottom: 50px;
-  box-shadow: 2px 3px #90ee90;
+  box-shadow: 5px 6px #90ee90;
   border:none;
 }
 

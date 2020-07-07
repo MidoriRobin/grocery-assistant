@@ -1,9 +1,8 @@
 <!-- this page displays the details of an items, is a result of clicking 'Click for more!'  -->
 <template>
   <div class="item-page">
-    <Flash :message="message"/>
     <!-- <h1>This is the Single Item Page</h1> -->
-    <div class="about-item">
+    <div class="about-item" id="aboutItem">
       <div class="item-img">
         <img src="../assets/None.jpg"/>
       </div>
@@ -18,7 +17,7 @@
         </div>
         <div class="interct-area">
           <button @click="scrllToReview">Leave a Review</button>
-          <form class="form-list-add" @submit.prevent="addToList"
+          <form v-if="usid" class="form-list-add" @submit.prevent="addToList"
           id="addList" method="post">
             <label for="listname"> List: </label>
             <select name="listname">
@@ -30,6 +29,7 @@
             <input type="number" name="quantity" value="1" hidden>
             <button type="submit" >Add to list</button>
           </form>
+          <h6 v-else> Sign in to create and add items to a list </h6>
         </div>
         <div class="item-desc">
           <h5>Description</h5>
@@ -45,12 +45,24 @@
         </div>
       </div>
     </div>
+    <div class="othr-disp">
+      <Flash :message="message"/>
+      <ul class="reviews">
+        <li v-for="review in reviews" :key="review.id">
+          <h5> {{ review.user_name }} </h5>
+          <p> {{ review.rating }} <p>
+          <p v-if="review.rating_desc"> {{  review.rating_desc }} </p>
+          <p v-else> <em> No comment made </em> </p>
+        </li>
+      </ul>
+    </div>
     <div class="nav-area">
       <div class="nav-buttons">
         <button @click="returnToItems">Back</button>
         <button @click="goToCart">To Cart</button>
       </div>
       <form class="form-review" @submit.prevent="reviewItem" id="reviewForm" method="post">
+        <input name="userid" :value="usid" hidden>
         <ul>
           <li>
             <textarea name="review" rows="10" cols="50" placeholder="Leave a review"></textarea>
@@ -69,12 +81,6 @@
         <button type="submit"> Submit </button>
       </form>
     </div>
-    <v-snackbar
-    v-model="snackbar"
-    :timeout="timeout"
-    >
-      Test
-    </v-snackbar>
   </div>
 </template>
 
@@ -90,14 +96,14 @@ export default {
     Flash
   },
   data: () => ({
-    snackbar: false,
-    timeout: 2000,
     message: '',
     error: '',
     item: '',
     lists: '',
+    reviews: [],
     rating: 4.5,
     qty: 1,
+    usid: sessionStorage.getItem("usid",)
   }),
 
   methods: {
@@ -121,6 +127,27 @@ export default {
       });
     },
 
+    getReviews: function() {
+      console.log("Fetching reviews for this item");
+      let resp = '';
+      fetch('http://localhost:5000/api/items/' + this.$route.params.itemid + '/review/',
+      {
+          method: 'GET',
+          headers: {}
+      })
+      .then(function (response){
+          resp = response.status;
+          return response.json();
+      })
+      .then((jsonResponse) => {
+          console.log(jsonResponse.status.message);
+          this.reviews = jsonResponse.status.reviews;
+      })
+      .catch(function (error) {
+          console.log(error);
+      });
+    },
+
     reviewItem: function() {
         console.log("Reviewing item");
 
@@ -137,6 +164,8 @@ export default {
         })
         .then((jsonResponse) => {
             this.message = jsonResponse.status.message;
+            this.scrllToItem();
+            this.getReviews();
             console.log(jsonResponse);
         })
         .catch(function (error) {
@@ -148,7 +177,12 @@ export default {
       let elmnt = document.getElementById('reviewForm');
       console.log(elmnt);
       elmnt.scrollIntoView(true);
-      this.snackbar = true;
+    },
+
+    scrllToItem: function() {
+      let elmnt = document.getElementById('aboutItem');
+      console.log(elmnt);
+      elmnt.scrollIntoView(true);
     },
 
     addToCart: function() {
@@ -257,7 +291,12 @@ export default {
   created: function () {
       console.log("Entered the item page");
       this.getItem();
-      this.getLists();
+      this.getReviews();
+      if ( "usid" in sessionStorage) {
+        this.getLists();
+      } else {
+        console.log("No user logged in");
+      }
   }
 };
 
@@ -267,6 +306,7 @@ export default {
 li {
   list-style-type: none;
 }
+
 div.item-page {
   display: grid;
   grid-template-rows: 50% 50%;
@@ -322,6 +362,7 @@ div.interct-area > button {
   width: 50%;
   margin: auto;
   margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 div.item-desc {
@@ -351,6 +392,20 @@ div.nav-buttons {
 .cart-ctrl > button {
   border-radius: 5px;
   border: 1px solid grey;
+}
+
+div.othr-disp {
+    grid-row: 2 / 3;
+    display: grid;
+    grid-template-rows: 10% 90%
+}
+
+.othr-disp > div.flash-area {
+  grid-row: 1 / 2;
+}
+
+#reviewForm > input {
+  display: none;
 }
 
 </style>
