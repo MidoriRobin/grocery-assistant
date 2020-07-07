@@ -1,8 +1,11 @@
 <template>
   <div class="order-page">
-    <h2>Your order is on its way.</h2>
-    <button type="button" name="button">Track Your Order</button>
+
+    <!-- <button type="button" name="button">Track Your Order</button> -->
     <ul class="summary">
+      <div class="head">
+        <h2>Your order is on its way.</h2>
+      </div>
       <li>Order # : {{ order.orderid }}</li>
       <li>Order Date: {{ order.date_ordered }}</li>
       <li>Order Total: ${{ order.sale_value}}</li>
@@ -75,20 +78,46 @@
 /* eslint-enable */
 </script>
 <style scoped>
+.head{
+  width:100%;
+  margin-bottom: 40px;
+  /* box-sizing: border-box; */
+  font-style: italic;
+}
+ul.summary{
+  display: flex;
+  width: 80%;
+  height: 160px;
+  margin-top: 50px;
+  margin-bottom: 100px;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 2px 3px;
+  flex-wrap: wrap;
+}
+
 ul.summary > li{
   margin-bottom: 8px;
   font-weight: bold;
+  margin-right: 10%;
+  text-align: center;
 }
 table{
   width: 100%;
   background: white;
-  height:
+  /* height:1000px; */
 }
 
 ul.summary{
   background-color: white;
 }
 
+th{
+  font-size: 130%;
+}
 tr{
   width: 100%;
 }
