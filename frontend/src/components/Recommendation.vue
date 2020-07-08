@@ -1,5 +1,9 @@
 <template>
   <div class="recomm">
+    <div class="recomm-header">
+      <h3>Recommendations</h3>
+
+    </div>
     <ul class="item-list" v-if="recomm">
       <li v-for="item in recomm" :key="item.id">
         <router-link :to="{ name: 'SingleItem', params: { itemid: item.item_id }}">
@@ -78,14 +82,26 @@ div.recomm {
   margin: 50px auto;
 }
 
+div.recomm-header {
+  grid-row: 1 / 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+div.recomm-header > h3 {
+
+}
+
 ul.item-list {
   grid-row: 2 / 3;
-  grid-column: 2 / 3;
   display: flex;
   flex-wrap: wrap;
   list-style: none;
   grid-column-gap: 50px;
   grid-row-gap: 60px;
+  padding-top: 25px;
+  background-color: white;
 }
 
 ul.item-list li{

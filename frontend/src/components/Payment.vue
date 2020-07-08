@@ -77,6 +77,7 @@ export default {
 
           if(resp === 201) {
             console.log("OK, making order");
+            sessionStorage.setItem('crtid', jsonResponse.status.cartid);
             this.$router.push('/orders')
 
           } else {
