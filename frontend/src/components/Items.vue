@@ -39,7 +39,8 @@
     <ul class="item-list">
       <li v-for="(item,index) in items" :key="item.id">
         <router-link :to="{ name: 'SingleItem', params: { itemid: item.item_id }}">
-          <img @click="goToItem(item.item_id)" class="plpic" src="../assets/None.jpg" alt="">
+          <img @click="goToItem(item.item_id)" class="plpic" @error="imageError = true"
+          :src="defImage(item.item_id)" alt="">
         </router-link>
         <div>
           <h5>{{item.item_name}}</h5>
@@ -55,6 +56,10 @@
         </div>
       </li>
     </ul>
+    <div class="pagination">
+      <button @click="prevPage"> &lt; prev </button>
+      <button @click="nextPage"> next &gt; </button>
+    </div>
   </div>
 </template>
 
@@ -66,6 +71,8 @@ export default {
   data: () => ({
       message: '',
       error: '',
+      imageError: false,
+      defaultImage: '../assets/None.jpg',
       items: [],
       curr_page: '',
       prev_page: '',
@@ -73,11 +80,23 @@ export default {
       item_qty: [{value:1},{value:1},{value:1},{value:1},{value:1},{value:1},{value:1},{value:1},{value:1},{value:1}],
   }),
 
+  computed: {
+  },
+
   methods: {
-    getItems: function() {
+
+    defImage: function(imgName) {
+      console.log(imgName);
+      console.log(this.imageError);
+      let loc = '../assets/images/items/' + imgName + '.jpg';
+      console.log(loc);
+      return this.imageError ? this.defaultImage : loc;
+    },
+
+    getItems: function(page = 1) {
       console.log("Viewing all items..");
       let resp = '';
-      fetch('http://localhost:5000/api/products?=page2',{
+      fetch('http://localhost:5000/api/products?page=' + page,{
           method: 'GET',
           headers: {},
       })
@@ -88,13 +107,29 @@ export default {
       .then((jsonResponse) => {
           console.log(jsonResponse);
           this.items = jsonResponse.status.products;
-          this.curr_page = jsonResponse.status.current_Page;
+          this.curr_page = jsonResponse.status.current_page;
           this.prev_page = jsonResponse.status.prev_page;
           this.next_page = jsonResponse.status.next_page;
       })
       .catch(function (error) {
           console.log(error);
       });
+    },
+
+    nextPage: function() {
+      if (this.next_page != this.curr_page){
+        this.getItems(this.next_page);
+      } else {
+        return null;
+      }
+    },
+
+    prevPage: function() {
+      if (this.prev_page != this.curr_page){
+        this.getItems(this.prev_page);
+      } else {
+        return null;
+      }
     },
 
     goToItem: function(itemid) {
@@ -165,7 +200,7 @@ body{
 }
 div.items-page {
   display: grid;
-  grid-template-rows: 20% 80%;
+  grid-template-rows: 20% 70% 10%;
   /* grid-template-columns:10% 90%; */
   grid-row-gap: 20px;
   /* border: 2px solid black; */
@@ -174,6 +209,8 @@ div.items-page {
   margin-right: auto;
   margin-left: auto;
   margin-top: 0;
+  margin-bottom: 100px;
+  padding-bottom: 100px;
   background-color: white;
 }
 
@@ -353,4 +390,20 @@ button.toCart:hover{
   color: green;
 }
 
+div.pagination {
+  grid-row: 3 / 4;
+  grid-column: 1 / 3;
+  margin: 0 auto;
+}
+
+.pagination {
+  display: inline-block;
+}
+
+.pagination > button {
+  color: black;
+  float: left;
+  padding: 8px 16px;
+  text-decoration: none;
+}
 </style>

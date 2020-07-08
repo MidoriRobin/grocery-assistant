@@ -252,6 +252,17 @@ def product(itemid):
 
     return jsonify(status=status), 201
 
+@app.route('/api/product/<itemid>/<userid>', methods=['GET'])
+def eval_product(itemid,userid):
+    message = "No message"
+    
+    print(RecomHandler.collab_fltr(userid,itemid))
+
+    status = {
+        "message": message,
+    }
+
+    return jsonify(status=status), 201
 #The route can be changed to "TryThese" instead of "Recommended items"
 @app.route('/api/TryThese/<userid>', methods=['GET'])
 # @login_required
@@ -285,7 +296,9 @@ def recomm(userid):
 # Function to randomize
     #rprop = buylst + rdmizePredictions(products)
 # W/o Dummy products
-    randPred = rdmize_predictions(recomProd)
+    # randPred = rdmize_predictions(recomProd)
+    randPred = recomProd
+
     print(randPred)
 
     status = {
@@ -302,25 +315,33 @@ def fltr_recomm(userid, categr):
 # Prepares recommendations, compiles products in an array
     recomD = RecomHandler.recomHelper()
     cUser = Usr.query.filter_by(acc_num=userid).first()
-
+    trueCat = int(categr) - 1
 # If statement to check if the user is a new user and has any previous recommendation
     if is_new(userid, recomD["uid"]):
         print("New user!")
-        uRecom = RecomHandler.diet_cnvrtr(pref=None, typecode=categr)
+        uRecom = RecomHandler.diet_cnvrtr(pref=None, typecode=trueCat)
         recomProd = fetch_recomm(1,uRecom)
     else:
         print("Old user..")
-        type = RecomHandler.diet_cnvrtr(categr)
+        type = RecomHandler.diet_cnvrtr(pref=None, typecode=trueCat)
         uRecom = RecomHandler.rec_by_usr(userid, recomD)
         recomProd = fetch_recomm(2,uRecom,dtype=type)
 
     randPred = rdmize_predictions(recomProd)
     print(randPred)
 
-    status = {
-        "message": "Recommended items obtained",
-        "items": [item.to_dict() for item in randPred]
-    }
+    if randPred is None:
+
+        status = {
+            "message": "No items available",
+            "items":[]
+        }
+
+    else:
+        status = {
+            "message": "Recommended items obtained",
+            "items": [item.to_dict() for item in randPred]
+        }
 
     return jsonify(status=status), 201
 
@@ -594,17 +615,24 @@ def rdmize_predictions(product_list):
     """
     six_rand_prod = []
     r_num = len(product_list)
+    print(r_num)
 
-    print("Starting randomization..")
-    while len(six_rand_prod) < 6:
-        prod = product_list[random.randrange(0,r_num)]
-        if prod in six_rand_prod:
-            continue
-        else:
-            six_rand_prod.append(prod)
+    if r_num == 0:
+        return None
+    elif r_num < 6:
+        print("Not many products so returning list..")
+        return product_list
+    else:
+        print("Starting randomization..")
+        while len(six_rand_prod) < 6:
+            prod = product_list[random.randrange(0,r_num)]
+            if prod in six_rand_prod:
+                continue
+            else:
+                six_rand_prod.append(prod)
 
-    print("Complete..")
-    return six_rand_prod
+        print("Complete..")
+        return six_rand_prod
 
 def dummy_list():
     """Generates a list of dummy products, and returns them as a list of products.
@@ -667,10 +695,16 @@ def fetch_recomm(type,uRList,dtype=None):
         return recomProd
 
     elif dtype:
+        print("regenerating recommendations based on item type")
         recomProd = []
-        print(uRList[1])
+        print(uRList)
         for i in uRList[1]:
-            recomProd.append(Item.query.filter_by(item_id=i, i_type=dtype).first())
+            for type in dtype:
+                item = Item.query.filter_by(item_id=i, i_type=type).first()
+                if item is not None:
+                    recomProd.append(item)
+                else:
+                    continue
 
         print("List of items: \n")
         print(recomProd)

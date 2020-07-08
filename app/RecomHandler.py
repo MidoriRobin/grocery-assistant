@@ -109,7 +109,8 @@ class RecomHandler():
 
         if typecode:
             pref = list(p_List.values())[typecode]
-            return list
+            print(pref)
+            return pref
         elif pref not in p_List:
             return "Invalid, selection"
         else:
