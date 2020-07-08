@@ -2,6 +2,7 @@
   <div class="orders-page">
     <div class="orders-area">
       <h2> Orders </h2>
+      <hr>
       <ul v-if="orders != []" class="orders">
         <li v-for="order in orders" :key="order.id">
           <router-link :to="{ name: 'Order', params: { orderid: order.orderid }}">
@@ -86,20 +87,25 @@ export default {
 <style>
 
 div.orders-page {
-  display: grid;
+  /* display: grid;
   grid-template-rows: 20% 80%;
-  grid-template-columns: 80% 20%;
+  grid-template-columns: 80% 20%; */
   border: 2px solid black;
   /* height: 1000px; */
   width: 70%;
   margin: 0 auto;
   margin-top: 50px;
   margin-bottom: 50px;
+  background-color: white;
 }
 
-div.orders-area {
+/* div.orders-area {
   display: grid;
   grid-column: 1 / 2;
+} */
+
+div.orders-area > h2{
+  text-align: center;
 }
 
 ul.orders li{
@@ -112,6 +118,10 @@ ul.orders li{
   padding: 10px;
   margin: 20px;
   height: 100px;
+  margin-bottom: 40px;
+  text-decoration: none;
+  /* word-break: break-all; */
+  /* position: relative; */
 }
 
 .orders button{

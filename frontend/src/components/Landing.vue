@@ -2,10 +2,9 @@
 <div class="landing">
   <div class="cta">
     <h1>Welcome to Quikshop!</h1>
-    <p>Sed laoreet urna dolor, ut feugiat ipsum tempor ac.
-      Nullam a elonec volutpat tellus gravida sem placerat,
-      sed pharetra nisi consequat. Etiam suscipit orci eu nulla ultricies semper.
-       Donec dignissim enim id velit egestas, sed aliquet lorem luctus.</p>
+    <p>Food is a very important part of our lives, so why hassle to get it?
+    Here at Quikshop we have decided to bring the grocery store to you.
+    You can shop from the comfort of your home and even while on the go!</p>
        <!-- <About/> -->
     <button @click="goShopping" type="button" name="shop-now">Shop Now</button>
   </div>
@@ -54,13 +53,18 @@ html,body{
 
 .cta{
   background-color: #CCCCFF;
-  width: 50%;
+  width: 60%;
   margin-top: 10%;
   margin-left: auto;
   margin-right: auto;
   background-color: white;
-  border: 2px solid black;
+  border: 1px solid black;
   padding: 30px 30px;
+}
+
+.cta > p{
+  font-size: 20px;
+  line-height: 30px;
 }
 
 div.cta > button{
@@ -69,8 +73,10 @@ div.cta > button{
   color: white;
   text-align: center;
   height: 80px;
-  width: 200px;
+  width: 250px;
   border-radius: 8px;
+  font-size: 20px;
+  margin-top: 10px;
 }
 
 div.cta > button:hover{
