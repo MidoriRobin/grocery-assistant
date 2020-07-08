@@ -165,7 +165,7 @@ def signup():
         password = request.form['password']
 
 
-        user = Usr(fname,lname,sex,email,phone,city,street,hh_size,
+        user = Usr(fname,lname,sex,phone,city,street, email, hh_size,
         no_adults,no_kids,marital_s,diet_pref,password)
         db.session.add(user)
         db.session.commit()
@@ -294,6 +294,34 @@ def recomm(userid):
     }
 
     # return render_template('recommendation.html', recom=randPred)
+    return jsonify(status=status), 201
+
+@app.route('/api/TryThese/<userid>/<categr>', methods=['GET'])
+def fltr_recomm(userid, categr):
+
+# Prepares recommendations, compiles products in an array
+    recomD = RecomHandler.recomHelper()
+    cUser = Usr.query.filter_by(acc_num=userid).first()
+
+# If statement to check if the user is a new user and has any previous recommendation
+    if is_new(userid, recomD["uid"]):
+        print("New user!")
+        uRecom = RecomHandler.diet_cnvrtr(pref=None, typecode=categr)
+        recomProd = fetch_recomm(1,uRecom)
+    else:
+        print("Old user..")
+        type = RecomHandler.diet_cnvrtr(categr)
+        uRecom = RecomHandler.rec_by_usr(userid, recomD)
+        recomProd = fetch_recomm(2,uRecom,dtype=type)
+
+    randPred = rdmize_predictions(recomProd)
+    print(randPred)
+
+    status = {
+        "message": "Recommended items obtained",
+        "items": [item.to_dict() for item in randPred]
+    }
+
     return jsonify(status=status), 201
 
 #Cart----------------------------------------------
@@ -507,14 +535,16 @@ def make_order(userid,cartid):
     db.session.add(order)
     db.session.commit()
 
-    status = {
-        "message": "Order placed successfully",
-    }
 
     new_cart = ShoppingCart(userid, date.today())
 
     db.session.add(new_cart)
     db.session.commit()
+
+    status = {
+    "message": "Order placed successfully",
+    "cartid": Usr.query.filter_by(acc_num=userid).first().get_cartid()
+    }
 
     return jsonify(status=status), 201
 
@@ -621,7 +651,7 @@ def is_new(userid, list):
     else:
         return False
 
-def fetch_recomm(type,uRList):
+def fetch_recomm(type,uRList,dtype=None):
     """
     Fetches recommendation based on user type.
     """
@@ -631,6 +661,16 @@ def fetch_recomm(type,uRList):
         print(uRList)
         for i in uRList:
             recomProd.extend(Item.query.filter_by(i_type=i).all())
+
+        print("List of items: \n")
+        print(recomProd)
+        return recomProd
+
+    elif dtype:
+        recomProd = []
+        print(uRList[1])
+        for i in uRList[1]:
+            recomProd.append(Item.query.filter_by(item_id=i, i_type=dtype).first())
 
         print("List of items: \n")
         print(recomProd)
