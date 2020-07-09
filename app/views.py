@@ -537,6 +537,20 @@ def remove_from_list(listid,itemid):
     # return redirect(url_for('list', listid=listid, userid=current_user.acc_num))
     return jsonify(status=status), 201
 
+@app.route('/api/users/<userid>/lists/<listid>', methods=['DELETE'])
+def delete_list(listid):
+
+    list = ShoppingList.query.filter_by(list_id=listid).first()
+
+    db.session.delete(list)
+    db.session.commit()
+
+    status = {
+        "message": "List deleted successfully"
+    }
+
+    return jsonify(status=status), 201
+
 #Courier----------------------------------------------
 @app.route('/courier', methods=['GET'])
 def courier(arg):

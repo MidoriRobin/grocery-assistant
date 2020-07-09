@@ -157,6 +157,9 @@ div.list-items-page {
   height: 1000px;
   width: 80%;
   margin: 0 auto;
+  background-color: white;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
 }
 
 div.cont {

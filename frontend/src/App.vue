@@ -4,13 +4,13 @@
       <h1>LOGO</h1>
       <li><router-link to="/about">About</router-link></li>
       <!-- <li><router-link to="/ping">Ping</router-link></li> -->
+      <li v-if="show"><button id="navi" @click="logout">Logout</button></li>
       <li><router-link to="/login">Login</router-link></li>
       <li><router-link to="/signup">Signup</router-link></li>
       <li><router-link to="/items">Items</router-link></li>
-      <li><router-link to="/lists">Shopping List</router-link></li>
       <li><router-link to="/orders">Orders</router-link></li>
+      <li><router-link to="/lists">Shopping Lists</router-link></li>
       <li><router-link to="/">Home</router-link></li>
-      <li v-if="show"><button id="navi" @click="logout">Logout</button></li>
       <!-- <div class="dropdown">
          <li><a>Menu</a></li>
         <button class="dropbtn">Menu</button>
@@ -35,14 +35,16 @@ export default {
     message: '',
     error: '',
     show: true,
+    usid: '',
   }),
 
-  watch: {
+  computed: {
     ifLogged: function() {
       if(!sessionStorage.getItem('usid')) {
-        show = false;
+        return false;
       } else {
-        show = true;
+        this.usid = sessionStorage.getItem('usid')
+        return true;
       }
     }
   },
