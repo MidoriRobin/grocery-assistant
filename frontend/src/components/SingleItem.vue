@@ -4,7 +4,9 @@
     <!-- <h1>This is the Single Item Page</h1> -->
     <div class="about-item" id="aboutItem">
       <div class="item-img">
-        <img src="../assets/None.jpg"/>
+        <img v-if="item.item_id < 10"
+        :src="require('@/assets/images/items/' + item.item_id + '.jpg')"/>
+        <img v-else src='@/assets/None.jpg'/>
       </div>
       <div class="about">
         <div class="item-info">

@@ -72,7 +72,7 @@ export default {
       message: '',
       error: '',
       imageError: false,
-      defaultImage: '../assets/None.jpg',
+      defaultImage: require('../assets/None.jpg'),
       items: [],
       curr_page: '',
       prev_page: '',
@@ -86,11 +86,15 @@ export default {
   methods: {
 
     defImage: function(imgName) {
-      console.log(imgName);
       console.log(this.imageError);
-      let loc = '../assets/images/items/' + imgName + '.jpg';
-      console.log(loc);
-      return this.imageError ? this.defaultImage : loc;
+      if (imgName < 10){
+        let loc = require('../assets/images/items/' + imgName + '.jpg');
+        console.log(loc);
+        return this.imageError ? this.defaultImage : loc;
+
+      } else {
+        return this.defaultImage;
+      }
     },
 
     getItems: function(page = 1) {
@@ -117,6 +121,9 @@ export default {
     },
 
     nextPage: function() {
+      let elmnt = document.querySelector('.items-page');
+      elmnt.scrollIntoView(true);
+
       if (this.next_page != this.curr_page){
         this.getItems(this.next_page);
       } else {
@@ -125,6 +132,9 @@ export default {
     },
 
     prevPage: function() {
+      let elmnt = document.querySelector('.items-page');
+      elmnt.scrollIntoView(true);
+
       if (this.prev_page != this.curr_page){
         this.getItems(this.prev_page);
       } else {
