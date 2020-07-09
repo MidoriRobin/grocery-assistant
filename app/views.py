@@ -15,6 +15,7 @@ from app.models import *
 from werkzeug.security import check_password_hash
 import random
 from datetime import date
+from decimal import *
 
 from app.RecomHandler import RecomHandler
 from app.Cbrec2 import cbrec2
@@ -252,14 +253,39 @@ def product(itemid):
 
     return jsonify(status=status), 201
 
-@app.route('/api/product/<itemid>/<userid>', methods=['GET'])
+@app.route('/api/products/<itemid>/<userid>', methods=['GET'])
 def eval_product(itemid,userid):
+    """
+    Accepts the users id and item id and runs a check to see whether the user
+    in question would like the item based on the recommendation model
+    """
+
     message = "No message"
-    
-    print(RecomHandler.collab_fltr(userid,itemid))
+    items = []
+
+    userid = int(userid)
+    itemid = int(itemid)
+
+    recInfo = RecomHandler.collab_fltr(userid,itemid)
+    print("UserId:", recInfo.uid)
+    print("ItemId:", recInfo.iid)
+    rating = Decimal.from_float(round(recInfo.est,2))
+    print("Estimated rating:", rating)
+
+    if rating >= 3.0:
+        message = "You should try this item"
+    elif rating < 3.0 and rating >= 2.5:
+        message = "You might like this item"
+    elif rating < 2.5:
+        message = "You probably wont like this item"
+        item = Item.query.filter_by(item_id=itemid).first()
+        ptntialItems = Item.query.filter_by(i_type=item.i_type).limit(50).all()
+
+        items = [item for item in ptntialItems if (RecomHandler.collab_fltr(userid,item.item_id).est > 2.5) ]
 
     status = {
         "message": message,
+        "items": [item.to_dict() for item in items[:3]]
     }
 
     return jsonify(status=status), 201

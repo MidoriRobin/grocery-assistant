@@ -47,7 +47,7 @@
     </div>
     <div class="othr-disp">
       <Flash :message="message"/>
-      <ul class="reviews">
+      <ul v-if="reviews != []" class="reviews">
         <li v-for="review in reviews" :key="review.id">
           <h5> {{ review.user_name }} </h5>
           <p> {{ review.rating }} <p>
@@ -55,6 +55,24 @@
           <p v-else> <em> No comment made </em> </p>
         </li>
       </ul>
+      <div v-else class="reviews">
+          <h5> <em>No recent reviews</em> </h5>
+      </div>
+      <div class="recomms">
+        <h5 v-if="recomMsg != ''"> {{recomMsg}} </h5>
+        <h5 v-else> No similar items can be fetched at this time </h5>
+        <ul class="recom-list" id="special-recom" v-if="othrItems != []">
+          <li v-for="item in othrItems" :key="item.id">
+            <router-link :to="{ name: 'SingleItem', params: { itemid: item.item_id }}">
+              <img @click="goToItem(item.item_id)" class="plpic" src="../assets/None.jpg" alt="">
+            </router-link>
+            <div>
+              <h5>{{item.item_name}}</h5>
+              <p>{{item.desc_item}}</p>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
     <div class="nav-area">
       <div class="nav-buttons">
@@ -97,8 +115,10 @@ export default {
   },
   data: () => ({
     message: '',
+    recomMsg: '',
     error: '',
     item: '',
+    othrItems: [],
     lists: '',
     reviews: [],
     rating: 4.5,
@@ -125,6 +145,32 @@ export default {
       .catch(function (error) {
           console.log(error);
       });
+    },
+
+    checkItem: function() {
+
+      console.log("Checking for other items..");
+      let resp = '';
+
+      fetch('http://localhost:5000/api/products/' + this.$route.params.itemid +
+       '/' + this.usid,{
+          method: 'GET',
+          headers: {}
+      })
+      .then(function (response){
+          resp = response.status;
+          return response.json();
+      })
+      .then((jsonResponse) => {
+          console.log("other items: " + jsonResponse.status.items);
+          console.log(jsonResponse.status.message);
+          this.recomMsg = jsonResponse.status.message;
+          this.othrItems = jsonResponse.status.items;
+      })
+      .catch(function (error) {
+          console.log(error);
+      });
+
     },
 
     getReviews: function() {
@@ -230,7 +276,6 @@ export default {
     getLists: function() {
         console.log("Getting users lists");
         let usr = sessionStorage.getItem('usid');
-        console.log(usr)
         fetch('http://localhost:5000/api/users/' + usr + '/lists',{
           method: 'GET',
           headers: {},
@@ -293,7 +338,9 @@ export default {
       this.getItem();
       this.getReviews();
       if ( "usid" in sessionStorage) {
+        console.log("user is logged in")
         this.getLists();
+        this.checkItem();
       } else {
         console.log("No user logged in");
       }
@@ -397,15 +444,45 @@ div.nav-buttons {
 div.othr-disp {
     grid-row: 2 / 3;
     display: grid;
-    grid-template-rows: 10% 90%
+    grid-template-rows: 10% 90%;
+    grid-template-columns: 50% 50%;
 }
 
 .othr-disp > div.flash-area {
   grid-row: 1 / 2;
+  grid-column: 1 / 3;
+}
+
+ul.reviews {
+  grid-row: 2 / 3;
+  grid-column: 1 / 2;
+
+}
+
+div.reviews {
+  grid-row: 2 / 3;
+  grid-column: 1 / 2;
+
+}
+
+div.recomms {
+  grid-row: 2 / 3;
+  grid-column: 2 / 3;
 }
 
 #reviewForm > input {
   display: none;
+}
+
+ul#special-recom.recom-list {
+  height: 300px;
+  width: 70%;
+  border-top: 5px inset grey;
+  border-left: 5px inset grey;
+  border-bottom: 5px inset grey;
+  border-radius: 10px;
+  overflow: hidden;
+  overflow-y: scroll;
 }
 
 </style>
