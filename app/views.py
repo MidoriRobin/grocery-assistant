@@ -273,11 +273,11 @@ def eval_product(itemid,userid):
     print("Estimated rating:", rating)
 
     if rating >= 3.0:
-        message = "You should try this item"
+        message = "This item was rated highly by users similar to you"
     elif rating < 3.0 and rating >= 2.5:
         message = "You might like this item"
     elif rating < 2.5:
-        message = "You probably wont like this item"
+        message = "Below are some good alternatives to the above item that you might like"
         item = Item.query.filter_by(item_id=itemid).first()
         ptntialItems = Item.query.filter_by(i_type=item.i_type).limit(50).all()
 

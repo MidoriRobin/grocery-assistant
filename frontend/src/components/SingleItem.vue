@@ -61,12 +61,12 @@
           <h5> <em>No recent reviews</em> </h5>
       </div>
       <div class="recomms">
-        <h5 v-if="recomMsg != ''"> {{recomMsg}} </h5>
+        <h5 v-if="recomMsg != ''"> {{recomMsg}}: </h5>
         <h5 v-else> No similar items can be fetched at this time </h5>
         <ul class="recom-list" id="special-recom" v-if="othrItems != []">
           <li v-for="item in othrItems" :key="item.id">
             <router-link :to="{ name: 'SingleItem', params: { itemid: item.item_id }}">
-              <img @click="goToItem(item.item_id)" class="plpic" src="../assets/None.jpg" alt="">
+              <img class="plpic" src="../assets/None.jpg" alt="">
             </router-link>
             <div>
               <h5>{{item.item_name}}</h5>
@@ -173,6 +173,13 @@ export default {
           console.log(error);
       });
 
+    },
+
+    goToItem: function(itemid) {
+        console.log("Navigating to item page..");
+        // let meid = sessionStorage.getItem('usid');
+        // let usid = sessionStorage.getItem('usid');
+        this.$router.push('/items/' + itemid);
     },
 
     getReviews: function() {
