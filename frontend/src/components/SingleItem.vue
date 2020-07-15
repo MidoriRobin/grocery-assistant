@@ -125,7 +125,7 @@ export default {
     reviews: [],
     rating: 4.5,
     qty: 1,
-    usid: sessionStorage.getItem("usid",)
+    usid: sessionStorage.getItem("usid"),
   }),
 
   methods: {
