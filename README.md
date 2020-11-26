@@ -1,3 +1,4 @@
+![Project Info](https://img.shields.io/badge/School%20Project-Capstone-red) [![GitHub issues](https://img.shields.io/github/issues/MidoriRobin/grocery-assistant)](https://github.com/MidoriRobin/grocery-assistant/issues) [![GitHub license](https://img.shields.io/github/license/MidoriRobin/grocery-assistant)](https://github.com/MidoriRobin/grocery-assistant)
 # Grocery Assistant
 A project to set up an online grocery shopping platform with a strong user recommendation system.
 
